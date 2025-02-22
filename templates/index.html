@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Stats</title>
+</head>
+<body>
+    <h1>Titled Tuesday Statistics</h1>
+
+    <!-- Form to Input Player Name -->
+    <form method="POST">
+        <label for="player_name">Enter Player Name:</label>
+        <input type="text" id="player_name" name="player_name" required>
+        <button type="submit">Show Ranking</button>
+    </form>
+
+    <h2>Ranking Progression for {{ player }}</h2>
+    <img src="{{ url_for('static', filename=player.replace(' ', '_') + '_ranking.png') }}" alt="Player Ranking Plot">
+</body>
+</html>
+
