@@ -4,7 +4,6 @@ from datetime import datetime
 import pandas as pd
 
 def rename_chess_files(directory="."):
-    # Iterate through all files in the directory
     for filename in os.listdir(directory):
         if not filename.endswith('.csv'):
             continue
@@ -52,5 +51,4 @@ def get_data():
     df.to_csv("static/data.csv", index=False)
 
 if __name__ == "__main__":
-    # You can specify a different directory as an argument
-    rename_chess_files("H:\\TT\\results\\TODO\\")
+    get_data()

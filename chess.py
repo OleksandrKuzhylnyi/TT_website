@@ -1,10 +1,8 @@
-import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-#column_widths = [15, 61, 4, 4, 5, 5, 15, 6, 4, 3, 6, 4, 3, 6, 4]
 
 def get_data() -> pd.DataFrame:
     df = pd.read_csv("static/data.csv")
@@ -33,12 +31,14 @@ def plot_player_ranking(df, player="Hikaru Nakamura"):
     df_player = df[df["Name"] == player]
     rankings_by_date = list(zip(df_player["date"].values, df_player["Number"].values))
     rankings_by_date.sort()
+    color_map = {1: 'yellow', 2: 'lightgrey', 3: 'brown'}
+    colors = [color_map.get(rank, 'blue') for _, rank in rankings_by_date]
     plt.figure(figsize=(14, 8))
-    plt.scatter(*zip(*rankings_by_date))
+    plt.scatter(*zip(*rankings_by_date), c=colors)
     plt.xticks(df_player["date"].values, rotation=45)
     plt.title(f"Rankings of {player}")
     plt.ylabel("Ranking")
-    plt.savefig(f"static/{player.replace(' ', '_')}_ranking.png")  # Save with player name
+    plt.savefig(f"static/{player.replace(' ', '_')}_ranking.png")
     plt.close()
 
 
@@ -64,7 +64,6 @@ def plot_num_of_players(df):
     plt.legend()
     plt.grid(True)
 
-    # Save & Close
     plt.savefig("static/max_players.png")
     plt.close()
 
