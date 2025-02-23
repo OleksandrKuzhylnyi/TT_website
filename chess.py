@@ -8,6 +8,7 @@ def get_data() -> pd.DataFrame:
     df = pd.read_csv("static/data.csv")
     return df
 
+
 def make_barplot(df):
     first_places = df[df["Number"] == 1]
     first = first_places["Name"].value_counts()
@@ -68,11 +69,50 @@ def plot_num_of_players(df):
     plt.close()
 
 
+def analyze_player_performance(df: pd.DataFrame, player="Hikaru Nakamura") -> dict:
+    """
+    Analyzes the performance of a specific player.
+    """
+    player_df = df[df["Name"] == player]
+
+    max_number_of_games = player_df.shape[0] * 11
+    skipped_games = (player_df.loc[:, "RND1":"RND11"] == "U--").sum().sum()
+    number_of_games = max_number_of_games - skipped_games
+    rounds = player_df.loc[:, "RND1":"RND11"].columns
+    wins = sum([player_df[round].str.startswith("W").sum() for round in rounds])
+    draws = sum([player_df[round].str.startswith("D").sum() for round in rounds])
+    losses = sum([player_df[round].str.startswith("L").sum() for round in rounds])
+
+    results = {
+        "player": player,
+        "max_possible_games": max_number_of_games,
+        "skipped_games": skipped_games,
+        "real_number_of_games": number_of_games,
+        "wins": wins,
+        "draws": draws,
+        "losses": losses,
+        "percent_of_points": 100 * (wins + draws / 2) / number_of_games,
+        "percent_of_wins": 100 * wins / number_of_games,
+        "percent_of_draws": 100 * draws / number_of_games,
+        "percent_of_losses": 100 * losses / number_of_games,
+    }
+
+    print(f"{player} played {number_of_games} games out of {max_number_of_games} possible")
+    print(f"{player} won {wins} games, drew {draws} games and lost {losses} games")
+    print(f"Percent of points: {100*(wins + draws/2) / number_of_games:.2f}%")
+    print(f"Percent of wins: {100*wins / number_of_games:.2f}%")
+    print(f"Percent of draws: {100*draws / number_of_games:.2f}%")
+    print(f"Percent of losses: {100*losses / number_of_games:.2f}%")
+
+    return results
+
+
 def main():
     df = get_data()
     make_barplot(df)
     plot_player_ranking(df)
     plot_num_of_players(df)
+    analyze_player_performance(df, "Hikaru Nakamura")
 
 if __name__ == "__main__":
     main()
