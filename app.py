@@ -30,8 +30,12 @@ def home():
 
         elif feature == "tournament":
             plot_num_of_players(df)
+            max_players = {
+                "early": df[df["time"] == "E"].groupby("date")["Number"].max().to_dict(),
+                "late": df[df["time"] == "L"].groupby("date")["Number"].max().to_dict(),
+            }
 
-    return render_template("index.html", player=player, stats=stats, feature=feature)
+    return render_template("index.html", player=player, stats=stats, feature=feature, max_players=max_players)
 
 if __name__ == "__main__":
     app.run(debug=True)

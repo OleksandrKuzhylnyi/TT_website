@@ -3,56 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chess Stats</title>
+    <title>Player Performance</title>
 </head>
 <body>
-    <h1>Titled Tuesday Statistics</h1>
-
-    <!-- Feature Selection -->
+    <h1>Player Performance</h1>
     <form method="POST">
-        <label for="feature">Choose a Feature:</label>
-        <select id="feature" name="feature" onchange="this.form.submit()">
-            <option value="ranking" {% if feature=='ranking' %}selected{% endif %}>Player Rankings</option>
-            <option value="performance" {% if feature=='performance' %}selected{% endif %}>Player Performance</option>
-            <option value="tournament" {% if feature=='tournament' %}selected{% endif %}>Max Players in Tournament</option>
+        <label for="player_name">Player Name:</label>
+        <input type="text" id="player_name" name="player_name" value="{{ player }}">
+        <label for="feature">Feature:</label>
+        <select id="feature" name="feature">
+            <option value="ranking" {% if feature == 'ranking' %}selected{% endif %}>Ranking</option>
+            <option value="performance" {% if feature == 'performance' %}selected{% endif %}>Performance</option>
+            <option value="tournament" {% if feature == 'tournament' %}selected{% endif %}>Tournament</option>
         </select>
+        <button type="submit">Submit</button>
     </form>
 
-    <!-- Player Input (Only for Player Features) -->
-    {% if feature in ['ranking', 'performance'] %}
-    <form method="POST">
-        <input type="hidden" name="feature" value="{{ feature }}">
-        <label for="player_name">Enter Player Name:</label>
-        <input type="text" id="player_name" name="player_name" value="{{ player }}" required>
-        <button type="submit">Show</button>
-    </form>
-    {% endif %}
-
-    <!-- Ranking Feature -->
-    {% if feature == "ranking" %}
-        <h2>Ranking Progression for {{ player }}</h2>
-        <img src="{{ url_for('static', filename=player.replace(' ', '_') + '_ranking.png') }}" alt="Player Ranking Plot">
-    
-    <!-- Performance Feature -->
-    {% elif feature == "performance" and stats %}
-        <h2>Performance Summary for {{ player }}</h2>
-        <table border="1">
-            <tr><th>Statistic</th><th>Value</th></tr>
-            <tr><td>Total Possible Games</td><td>{{ stats.max_possible_games }}</td></tr>
-            <tr><td>Games Played</td><td>{{ stats.real_number_of_games }}</td></tr>
-            <tr><td>Wins</td><td>{{ stats.wins }}</td></tr>
-            <tr><td>Draws</td><td>{{ stats.draws }}</td></tr>
-            <tr><td>Losses</td><td>{{ stats.losses }}</td></tr>
-            <tr><td>Win Percentage</td><td>{{ stats.percent_of_wins|round(2) }}%</td></tr>
-            <tr><td>Draw Percentage</td><td>{{ stats.percent_of_draws|round(2) }}%</td></tr>
-            <tr><td>Loss Percentage</td><td>{{ stats.percent_of_losses|round(2) }}%</td></tr>
-            <tr><td>Overall Performance (Points %)</td><td>{{ stats.percent_of_points|round(2) }}%</td></tr>
-        </table>
-
-    <!-- Tournament Feature -->
-    {% elif feature == "tournament" %}
-        <h2>Max Number of Players in Tournaments</h2>
-        <img src="{{ url_for('static', filename='max_players.png') }}" alt="Max Players Graph">
+    {% if feature == 'performance' and stats %}
+    <h2>Performance Statistics for {{ player }}</h2>
+    <ul>
+        <li>Max Possible Games: {{ stats.max_possible_games }}</li>
+        <li>Skipped Games: {{ stats.skipped_games }}</li>
+        <li>Real Number of Games: {{ stats.real_number_of_games }}</li>
+        <li>Wins: {{ stats.wins }}</li>
+        <li>Draws: {{ stats.draws }}</li>
+        <li>Losses: {{ stats.losses }}</li>
+        <li>Percent of Points: {{ stats.percent_of_points | round(2) }}%</li>
+        <li>Percent of Wins: {{ stats.percent_of_wins | round(2) }}%</li>
+        <li>Percent of Draws: {{ stats.percent_of_draws | round(2) }}%</li>
+        <li>Percent of Losses: {{ stats.percent_of_losses | round(2) }}%</li>
+        <li>First Place Finishes: {{ stats.first_place }}</li>
+        <li>Second Place Finishes: {{ stats.second_place }}</li>
+        <li>Third Place Finishes: {{ stats.third_place }}</li>
+        <li>Top 5 Finishes: {{ stats.top5 }}</li>
+        <li>Top 10 Finishes: {{ stats.top10 }}</li>
+        <li>Top 100 Finishes: {{ stats.top100 }}</li>
+    </ul>
+    {% elif feature == 'ranking' %}
+    <h2>Ranking for {{ player }}</h2>
+    <img src="static/{{ player.replace(' ', '_') }}_ranking.png" alt="Ranking Plot">
+    {% elif feature == 'tournament' and max_players %}
+    <h2>Number of Players in Titled Tuesday (Early vs. Late)</h2>
+    <img src="static/max_players.png" alt="Number of Players Plot">
     {% endif %}
 </body>
 </html>
