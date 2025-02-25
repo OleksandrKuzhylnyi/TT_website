@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 import pandas as pd
-from chess import get_data, plot_player_ranking, plot_num_of_players, analyze_player_performance, make_barplot
+from chess import *
 
 app = Flask(__name__)
 
@@ -13,6 +13,7 @@ def home():
     feature = "ranking"  # Default feature
     stats = None
     max_players = None
+    top_participators = None
 
     if request.method == "POST":
         feature = request.form.get("feature", "ranking")  # Get feature selection
@@ -35,7 +36,11 @@ def home():
                 "late": df[df["time"] == "L"].groupby("date")["Number"].max().to_dict(),
             }
 
-    return render_template("index.html", player=player, stats=stats, feature=feature, max_players=max_players)
+        elif feature == "participation":
+            top_participators = players_by_participation(df)
+
+    return render_template("index.html", player=player, stats=stats, feature=feature,
+                            max_players=max_players, top_participators=top_participators)
 
 if __name__ == "__main__":
     app.run(debug=True)

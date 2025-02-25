@@ -125,6 +125,11 @@ def analyze_player_performance(df: pd.DataFrame, player="Hikaru Nakamura") -> di
     return results
 
 
+def players_by_participation(df, limit=100):
+    top_participators = df["Name"].value_counts()
+    return top_participators[:limit].to_dict()
+
+
 def main():
     df = get_data()
     make_barplot(df)

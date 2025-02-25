@@ -15,6 +15,7 @@
             <option value="ranking" {% if feature == 'ranking' %}selected{% endif %}>Ranking</option>
             <option value="performance" {% if feature == 'performance' %}selected{% endif %}>Performance</option>
             <option value="tournament" {% if feature == 'tournament' %}selected{% endif %}>Tournament</option>
+            <option value="participation" {% if feature == 'participation' %}selected{% endif %}>Participation</option>
         </select>
         <button type="submit">Submit</button>
     </form>
@@ -45,6 +46,13 @@
     {% elif feature == 'tournament' and max_players %}
     <h2>Number of Players in Titled Tuesday (Early vs. Late)</h2>
     <img src="static/max_players.png" alt="Number of Players Plot">
+    {% elif feature == 'participation' and top_participators %}
+    <h2>Top Participators</h2>
+    <ul>
+        {% for name, count in top_participators.items() %}
+        <li>{{ name }}: {{ count }} participations</li>
+        {% endfor %}
+    </ul>
     {% endif %}
 </body>
 </html>
