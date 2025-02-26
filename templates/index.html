@@ -16,6 +16,7 @@
             <option value="performance" {% if feature == 'performance' %}selected{% endif %}>Performance</option>
             <option value="tournament" {% if feature == 'tournament' %}selected{% endif %}>Tournament</option>
             <option value="participation" {% if feature == 'participation' %}selected{% endif %}>Participation</option>
+            <option value="winner_scores" {% if feature == 'winner_scores' %}selected{% endif %}>Winner Scores</option>
         </select>
         <button type="submit">Submit</button>
     </form>
@@ -53,6 +54,9 @@
         <li>{{ name }}: {{ count }} participations</li>
         {% endfor %}
     </ul>
+    {% elif feature == 'winner_scores' and winner_scores %}
+    <h2>Score of the Winner over Time</h2>
+    <img src="{{ winner_scores }}" alt="Winner Scores Plot">
     {% endif %}
 </body>
 </html>

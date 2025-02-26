@@ -95,12 +95,12 @@ def analyze_player_performance(df: pd.DataFrame, player="Hikaru Nakamura") -> di
     number_of_games = wins + draws + losses
     skipped_games = max_possible_games - number_of_games
 
-    first = player_df[df["Number"] == 1].shape[0]
-    second = player_df[df["Number"] == 2].shape[0]
-    third = player_df[df["Number"] == 3].shape[0]
-    top5 = player_df[df["Number"] <= 5].shape[0]
-    top10 = player_df[df["Number"] <= 10].shape[0]
-    top100 = player_df[df["Number"] <= 100].shape[0]
+    first = player_df[player_df["Number"] == 1].shape[0]
+    second = player_df[player_df["Number"] == 2].shape[0]
+    third = player_df[player_df["Number"] == 3].shape[0]
+    top5 = player_df[player_df["Number"] <= 5].shape[0]
+    top10 = player_df[player_df["Number"] <= 10].shape[0]
+    top100 = player_df[player_df["Number"] <= 100].shape[0]
 
     results = {
         "player": player,
@@ -130,12 +130,22 @@ def players_by_participation(df, limit=100):
     return top_participators[:limit].to_dict()
 
 
-def main():
-    df = get_data()
-    make_barplot(df)
-    plot_player_ranking(df)
-    plot_num_of_players(df)
-    analyze_player_performance(df, "Hikaru Nakamura")
+def average_score_of_winner(df):
+    winners_df = df[df["Number"] == 1]
+    early = winners_df[winners_df["time"] == "E"]
+    late = winners_df[winners_df["time"] == "L"]
+    early_scores = early.loc[:, ["date", "Score"]].sort_values(by="date")
+    late_scores = late.loc[:, ["date", "Score"]].sort_values(by="date")
+    fig = plt.figure(figsize=(12, 6))
+    plt.plot(early_scores["date"], early_scores["Score"], label="Early", marker='o', color='blue')
+    plt.plot(late_scores["date"], late_scores["Score"], label="Late", marker='s', color='red')
+    plt.legend()
+    plt.xticks(rotation=45)
+    plt.yticks(np.arange(9.5, 11.5, 0.5))
+    plt.title("Score of the Winner over Time")
+    plt.xlabel("Date")
+    plt.ylabel("Score")
+    plt.grid(True)
 
-if __name__ == "__main__":
-    main()
+    plt.savefig("static/winner_score.png")
+    plt.close()

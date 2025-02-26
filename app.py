@@ -14,6 +14,7 @@ def home():
     stats = None
     max_players = None
     top_participators = None
+    winner_scores = None
 
     if request.method == "POST":
         feature = request.form.get("feature", "ranking")  # Get feature selection
@@ -39,8 +40,13 @@ def home():
         elif feature == "participation":
             top_participators = players_by_participation(df)
 
+        elif feature == "winner_scores":
+            average_score_of_winner(df)
+            winner_scores = "static/winner_score.png"
+
     return render_template("index.html", player=player, stats=stats, feature=feature,
-                            max_players=max_players, top_participators=top_participators)
+                            max_players=max_players, top_participators=top_participators,
+                            winner_scores=winner_scores)
 
 if __name__ == "__main__":
     app.run(debug=True)
