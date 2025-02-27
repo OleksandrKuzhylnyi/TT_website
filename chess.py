@@ -149,3 +149,26 @@ def average_score_of_winner(df):
 
     plt.savefig("static/winner_score.png")
     plt.close()
+
+
+def average_score_of_top_10(df):
+    top_10_df = df[df["Number"] <= 10]
+    early = top_10_df[top_10_df["time"] == "E"]
+    late = top_10_df[top_10_df["time"] == "L"]
+    early_scores = early.loc[:, ["date", "Score"]].groupby(["date"]).mean().sort_values(by="date")
+    early_scores.reset_index(inplace=True)
+    late_scores = late.loc[:, ["date", "Score"]].groupby(["date"]).mean().sort_values(by="date")
+    late_scores.reset_index(inplace=True)
+    fig = plt.figure(figsize=(12, 6))
+    plt.plot(early_scores["date"], early_scores["Score"], label="Early", marker='o', color='blue')
+    plt.plot(late_scores["date"], late_scores["Score"], label="Late", marker='s', color='red')
+    plt.legend()
+    plt.xticks(rotation=45)
+    plt.yticks(np.arange(9.5, 11.5, 0.5))
+    plt.title("Score of the Winner over Time")
+    plt.xlabel("Date")
+    plt.ylabel("Score")
+    plt.grid(True)
+
+    plt.savefig("static/top_10_score.png")
+    plt.close()
