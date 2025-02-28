@@ -10,27 +10,27 @@ def get_data() -> pd.DataFrame:
 
 
 def make_barplot(df):
-    first_places = df[df["Number"] == 1]
-    first = first_places["Name"].value_counts()
-    second_places = df[df["Number"] == 2]
-    second = second_places["Name"].value_counts()
-    third_places = df[df["Number"] == 3]
-    third = third_places["Name"].value_counts()
-    winners = pd.merge(first, second, how='outer', on="Name", suffixes=('_1', '_2'))
-    winners = pd.merge(winners, third, how='outer', on="Name")
+    first_places = df[df["place"] == 1]
+    first = first_places["real_name"].value_counts()
+    second_places = df[df["place"] == 2]
+    second = second_places["real_name"].value_counts()
+    third_places = df[df["place"] == 3]
+    third = third_places["real_name"].value_counts()
+    winners = pd.merge(first, second, how='outer', on="real_name", suffixes=('_1', '_2'))
+    winners = pd.merge(winners, third, how='outer', on="real_name")
     winners.fillna(0, inplace=True)
     winners.reset_index(inplace=True)
     winners.rename(columns={"count_1" : '1', "count_2" : '2', "count" : '3'}, inplace=True)
     winners.sort_values(by=["1", "2", "3"], inplace=True)
     colors = ["yellow", "lightgrey", "brown"]
-    winners.set_index("Name").plot(kind='barh', stacked=True, color=colors, xticks=(np.arange(0, 12, 1)), figsize=(12,8))
+    winners.set_index("real_name").plot(kind='barh', stacked=True, color=colors, xticks=(np.arange(0, 12, 1)), figsize=(12,8))
     plt.savefig("static/barplot.png")
     plt.close() 
 
 
 def plot_player_ranking(df, player="Hikaru Nakamura"):
-    df_player = df[df["Name"] == player]
-    rankings_by_date = list(zip(df_player["date"].values, df_player["Number"].values))
+    df_player = df[df["real_name"] == player]
+    rankings_by_date = list(zip(df_player["date"].values, df_player["place"].values))
     rankings_by_date.sort()
     color_map = {1: 'yellow', 2: 'lightgrey', 3: 'brown', 4: 'red', 5: 'red',
                  6: 'green', 7: 'green', 8: 'green', 9: 'green', 10: 'green'}
@@ -56,20 +56,17 @@ def plot_player_ranking(df, player="Hikaru Nakamura"):
 
 
 def plot_num_of_players(df):
-    # Separate Early and Late tournaments
     early = df[df["time"] == "E"]
     late = df[df["time"] == "L"]
 
     # Get max number of players per date
-    num_of_players_E = early.groupby("date")["Number"].max()
-    num_of_players_L = late.groupby("date")["Number"].max()
+    num_of_players_E = early.groupby("date")["place"].max()
+    num_of_players_L = late.groupby("date")["place"].max()
 
     # Plotting
     plt.figure(figsize=(12, 6))
     plt.plot(num_of_players_E.index, num_of_players_E.values, marker='o', label="Early Tournament", color='blue')
     plt.plot(num_of_players_L.index, num_of_players_L.values, marker='s', label="Late Tournament", color='red')
-
-    # Formatting
     plt.xlabel("Date")
     plt.ylabel("Number of Players")
     plt.title("Number of Players in Titled Tuesday (Early vs. Late)")
@@ -81,26 +78,26 @@ def plot_num_of_players(df):
     plt.close()
 
 
-def analyze_player_performance(df: pd.DataFrame, player="Hikaru Nakamura") -> dict:
+def analyze_player_performance(df, player="Hikaru Nakamura") -> dict:
     """
     Analyzes the performance of a specific player.
     """
-    player_df = df[df["Name"] == player]
+    player_df = df[df["real_name"] == player]
 
     max_possible_games = player_df.shape[0] * 11
-    rounds = player_df.loc[:, "RND1":"RND11"].columns
+    rounds = player_df.loc[:, "round_1":"round_11"].columns
     wins = sum([player_df[round].str.startswith("W").sum() for round in rounds])
     draws = sum([player_df[round].str.startswith("D").sum() for round in rounds])
     losses = sum([player_df[round].str.startswith("L").sum() for round in rounds])
     number_of_games = wins + draws + losses
     skipped_games = max_possible_games - number_of_games
 
-    first = player_df[player_df["Number"] == 1].shape[0]
-    second = player_df[player_df["Number"] == 2].shape[0]
-    third = player_df[player_df["Number"] == 3].shape[0]
-    top5 = player_df[player_df["Number"] <= 5].shape[0]
-    top10 = player_df[player_df["Number"] <= 10].shape[0]
-    top100 = player_df[player_df["Number"] <= 100].shape[0]
+    first = player_df[player_df["place"] == 1].shape[0]
+    second = player_df[player_df["place"] == 2].shape[0]
+    third = player_df[player_df["place"] == 3].shape[0]
+    top5 = player_df[player_df["place"] <= 5].shape[0]
+    top10 = player_df[player_df["place"] <= 10].shape[0]
+    top100 = player_df[player_df["place"] <= 100].shape[0]
 
     results = {
         "player": player,
@@ -126,19 +123,19 @@ def analyze_player_performance(df: pd.DataFrame, player="Hikaru Nakamura") -> di
 
 
 def players_by_participation(df, limit=100):
-    top_participators = df["Name"].value_counts()
+    top_participators = df["real_name"].value_counts()
     return top_participators[:limit].to_dict()
 
 
 def average_score_of_winner(df):
-    winners_df = df[df["Number"] == 1]
+    winners_df = df[df["place"] == 1]
     early = winners_df[winners_df["time"] == "E"]
     late = winners_df[winners_df["time"] == "L"]
     early_scores = early.loc[:, ["date", "Score"]].sort_values(by="date")
     late_scores = late.loc[:, ["date", "Score"]].sort_values(by="date")
     fig = plt.figure(figsize=(12, 6))
-    plt.plot(early_scores["date"], early_scores["Score"], label="Early", marker='o', color='blue')
-    plt.plot(late_scores["date"], late_scores["Score"], label="Late", marker='s', color='red')
+    plt.plot(early_scores["date"], early_scores["score"], label="Early", marker='o', color='blue')
+    plt.plot(late_scores["date"], late_scores["score"], label="Late", marker='s', color='red')
     plt.legend()
     plt.xticks(rotation=45)
     plt.yticks(np.arange(9.5, 11.5, 0.5))
@@ -152,16 +149,16 @@ def average_score_of_winner(df):
 
 
 def average_score_of_top_10(df):
-    top_10_df = df[df["Number"] <= 10]
+    top_10_df = df[df["place"] <= 10]
     early = top_10_df[top_10_df["time"] == "E"]
     late = top_10_df[top_10_df["time"] == "L"]
-    early_scores = early.loc[:, ["date", "Score"]].groupby(["date"]).mean().sort_values(by="date")
+    early_scores = early.loc[:, ["date", "score"]].groupby(["date"]).mean().sort_values(by="date")
     early_scores.reset_index(inplace=True)
-    late_scores = late.loc[:, ["date", "Score"]].groupby(["date"]).mean().sort_values(by="date")
+    late_scores = late.loc[:, ["date", "score"]].groupby(["date"]).mean().sort_values(by="date")
     late_scores.reset_index(inplace=True)
     fig = plt.figure(figsize=(12, 6))
-    plt.plot(early_scores["date"], early_scores["Score"], label="Early", marker='o', color='blue')
-    plt.plot(late_scores["date"], late_scores["Score"], label="Late", marker='s', color='red')
+    plt.plot(early_scores["date"], early_scores["score"], label="Early", marker='o', color='blue')
+    plt.plot(late_scores["date"], late_scores["score"], label="Late", marker='s', color='red')
     plt.legend()
     plt.xticks(rotation=45)
     plt.yticks(np.arange(9.5, 11.5, 0.5))
@@ -172,3 +169,27 @@ def average_score_of_top_10(df):
 
     plt.savefig("static/top_10_score.png")
     plt.close()
+
+
+def average_rating_of_top_10(df):
+    top_10_df = df[df["place"] <= 10]
+    early = top_10_df[top_10_df["time"] == "E"]
+    late = top_10_df[top_10_df["time"] == "L"]
+    early_rating = early.loc[:, ["date", "rating"]].groupby(["date"]).mean().sort_values(by="date")
+    early_rating.reset_index(inplace=True)
+    late_rating = late.loc[:, ["date", "rating"]].groupby(["date"]).mean().sort_values(by="date")
+    late_rating.reset_index(inplace=True)
+    fig = plt.figure(figsize=(12, 6))
+    plt.plot(early_rating["date"], early_rating["rating"], label="Early", marker='o', color='blue')
+    plt.plot(late_rating["date"], late_rating["rating"], label="Late", marker='s', color='red')
+    plt.legend()
+    plt.xticks(rotation=45)
+    plt.yticks(np.arange(2950, 3200, 50))
+    plt.title("Average Rating of Top 10 over Time")
+    plt.xlabel("Date")
+    plt.ylabel("Rating")
+    plt.grid(True)
+
+    plt.savefig("static/top_10_rating.png")
+    plt.close()
+    
