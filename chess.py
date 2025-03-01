@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.ticker import PercentFormatter
 import seaborn as sns
 
 
@@ -193,3 +194,17 @@ def average_rating_of_top_10(df):
     plt.savefig("static/top_10_rating.png")
     plt.close()
     
+
+def skips_per_round(df):
+    num_games = df.shape[0]
+    skips = [(df[f"round_{i}"] == "U--").sum() / num_games for i in range(1, 12)]
+    fig = plt.figure(figsize=(12, 6))
+    plt.bar(np.arange(1, 12), skips, color='blue')
+    plt.xticks(np.arange(1, 12))
+    plt.title("Percent of Skips per Round")
+    plt.xlabel("Round")
+    plt.ylabel("Percent of Skips")
+    plt.gca().yaxis.set_major_formatter(PercentFormatter(1))
+
+    plt.savefig("static/skips_per_round.png")
+    plt.close()
