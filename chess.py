@@ -208,3 +208,19 @@ def skips_per_round(df):
 
     plt.savefig("static/skips_per_round.png")
     plt.close()
+
+def starting_ranks_of_winners(df):
+    starting_rankings = df[df["place"] == 1]["starting_rank"]
+    bins = [0, 1, 2, 3, 5, 10, 20, 50, float("inf")]
+    labels = ["1", "2", "3", "4-5", "6-10", "11-20", "21-50", "50+"]
+    categories = pd.cut(starting_rankings, bins=bins, labels=labels, right=True)
+    category_counts = categories.value_counts().sort_index()
+
+    plt.figure(figsize=(8, 8))
+    plt.pie(category_counts, labels=category_counts.index, autopct="%1.1f%%", startangle=140, colors=plt.cm.Paired.colors)
+    plt.title("Proportion of Winners by Starting Position")
+
+    plt.savefig("static/starting_ranks.png")
+    plt.close()
+
+starting_ranks_of_winners(get_data())
