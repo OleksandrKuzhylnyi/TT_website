@@ -1,11 +1,11 @@
 from flask import Flask, render_template, request
 import pandas as pd
-from chess import *
+from players import plot_player_ranking, analyze_player_performance, players_by_participation
+from tournaments import plot_num_of_players, average_score_of_winner
 
 app = Flask(__name__)
 
-# Load dataset
-df = get_data()
+df = pd.read_csv("static/data.csv")
 
 @app.route("/", methods=["GET", "POST"])
 def home():

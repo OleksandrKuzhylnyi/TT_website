@@ -3,9 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import PercentFormatter
 
-def get_data() -> pd.DataFrame:
-    df = pd.read_csv("static/data.csv")
-    return df
 
 def plot_num_of_players(df):
     early = df[df["time"] == "E"]
@@ -15,7 +12,6 @@ def plot_num_of_players(df):
     num_of_players_E = early.groupby("date")["place"].max()
     num_of_players_L = late.groupby("date")["place"].max()
 
-    # Plotting
     plt.figure(figsize=(12, 6))
     plt.plot(num_of_players_E.index, num_of_players_E.values, marker='o', label="Early Tournament", color='blue')
     plt.plot(num_of_players_L.index, num_of_players_L.values, marker='s', label="Late Tournament", color='red')
@@ -120,4 +116,3 @@ def starting_ranks_of_winners(df):
 
     plt.savefig("static/starting_ranks.png")
     plt.close()
-    
