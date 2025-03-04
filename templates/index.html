@@ -3,60 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Player Performance</title>
+    <title>Chess Stats</title>
 </head>
 <body>
-    <h1>Player Performance</h1>
+    <h1>Titled Tuesday Statistics</h1>
+
+    <!-- Mode Selection Form -->
     <form method="POST">
-        <label for="player_name">Player Name:</label>
-        <input type="text" id="player_name" name="player_name" value="{{ player }}">
-        <label for="feature">Feature:</label>
-        <select id="feature" name="feature">
-            <option value="ranking" {% if feature == 'ranking' %}selected{% endif %}>Ranking</option>
-            <option value="performance" {% if feature == 'performance' %}selected{% endif %}>Performance</option>
-            <option value="tournament" {% if feature == 'tournament' %}selected{% endif %}>Tournament</option>
-            <option value="participation" {% if feature == 'participation' %}selected{% endif %}>Participation</option>
-            <option value="winner_scores" {% if feature == 'winner_scores' %}selected{% endif %}>Winner Scores</option>
+        <label for="mode">Choose an Option:</label>
+        <select id="mode" name="mode" onchange="this.form.submit()">
+            <option value="" disabled selected>Select...</option>
+            <option value="tournament" {% if mode=='tournament' %}selected{% endif %}>Tournaments</option>
+            <option value="player" {% if mode=='player' %}selected{% endif %}>Player</option>
         </select>
-        <button type="submit">Submit</button>
     </form>
 
-    {% if feature == 'performance' and stats %}
-    <h2>Performance Statistics for {{ player }}</h2>
-    <ul>
-        <li>Max Possible Games: {{ stats.max_possible_games }}</li>
-        <li>Skipped Games: {{ stats.skipped_games }}</li>
-        <li>Real Number of Games: {{ stats.real_number_of_games }}</li>
-        <li>Wins: {{ stats.wins }}</li>
-        <li>Draws: {{ stats.draws }}</li>
-        <li>Losses: {{ stats.losses }}</li>
-        <li>Percent of Points: {{ stats.percent_of_points | round(2) }}%</li>
-        <li>Percent of Wins: {{ stats.percent_of_wins | round(2) }}%</li>
-        <li>Percent of Draws: {{ stats.percent_of_draws | round(2) }}%</li>
-        <li>Percent of Losses: {{ stats.percent_of_losses | round(2) }}%</li>
-        <li>First Place Finishes: {{ stats.first_place }}</li>
-        <li>Second Place Finishes: {{ stats.second_place }}</li>
-        <li>Third Place Finishes: {{ stats.third_place }}</li>
-        <li>Top 5 Finishes: {{ stats.top5 }}</li>
-        <li>Top 10 Finishes: {{ stats.top10 }}</li>
-        <li>Top 100 Finishes: {{ stats.top100 }}</li>
-    </ul>
-    {% elif feature == 'ranking' %}
-    <h2>Ranking for {{ player }}</h2>
-    <img src="static/{{ player.replace(' ', '_') }}_ranking.png" alt="Ranking Plot">
-    {% elif feature == 'tournament' and max_players %}
-    <h2>Number of Players in Titled Tuesday (Early vs. Late)</h2>
-    <img src="static/max_players.png" alt="Number of Players Plot">
-    {% elif feature == 'participation' and top_participators %}
-    <h2>Top Participators</h2>
-    <ul>
-        {% for name, count in top_participators.items() %}
-        <li>{{ name }}: {{ count }} participations</li>
-        {% endfor %}
-    </ul>
-    {% elif feature == 'winner_scores' and winner_scores %}
-    <h2>Score of the Winner over Time</h2>
-    <img src="{{ winner_scores }}" alt="Winner Scores Plot">
+    <!-- Show player input field if 'Player' mode is selected -->
+    {% if mode == "player" %}
+    <form method="POST">
+        <input type="hidden" name="mode" value="player">
+        <label for="player_name">Enter Player Name:</label>
+        <input type="text" id="player_name" name="player_name" value="{{ player_name }}" required>
+        <button type="submit">Show Stats</button>
+    </form>
     {% endif %}
+
+    <!-- Tournament Statistics -->
+    {% if mode == "tournament" %}
+        <h2>Tournament Statistics</h2>
+        <img src="{{ url_for('static', filename='max_players.png') }}" alt="Number of Players">
+        <img src="{{ url_for('static', filename='winner_score.png') }}" alt="Winner Score">
+        <img src="{{ url_for('static', filename='top_10_score.png') }}" alt="Top 10 Score">
+        <img src="{{ url_for('static', filename='top_10_rating.png') }}" alt="Top 10 Rating">
+        <img src="{{ url_for('static', filename='skips_per_round.png') }}" alt="Skips Per Round">
+        <img src="{{ url_for('static', filename='starting_ranks.png') }}" alt="Starting Ranks of Winners">
+    {% endif %}
+
+    <!-- Player Statistics -->
+    {% if mode == "player" and stats %}
+        <h2>Performance Summary for {{ player_name }}</h2>
+        <img src="{{ url_for('static', filename=player_name.replace(' ', '_') + '_ranking.png') }}" alt="Player Ranking">
+
+        <table border="1">
+            <tr><th>Statistic</th><th>Value</th></tr>
+            <tr><td>Total Possible Games</td><td>{{ stats.max_possible_games }}</td></tr>
+            <tr><td>Games Played</td><td>{{ stats.real_number_of_games }}</td></tr>
+            <tr><td>Wins</td><td>{{ stats.wins }}</td></tr>
+            <tr><td>Draws</td><td>{{ stats.draws }}</td></tr>
+            <tr><td>Losses</td><td>{{ stats.losses }}</td></tr>
+            <tr><td>Win Percentage</td><td>{{ stats.percent_of_wins|round(2) }}%</td></tr>
+            <tr><td>Draw Percentage</td><td>{{ stats.percent_of_draws|round(2) }}%</td></tr>
+            <tr><td>Loss Percentage</td><td>{{ stats.percent_of_losses|round(2) }}%</td></tr>
+            <tr><td>First Place Finishes</td><td>{{ stats.first_place }}</td></tr>
+            <tr><td>Second Place Finishes</td><td>{{ stats.second_place }}</td></tr>
+            <tr><td>Third Place Finishes</td><td>{{ stats.third_place }}</td></tr>
+            <tr><td>Top 5 Finishes</td><td>{{ stats.top5 }}</td></tr>
+            <tr><td>Top 10 Finishes</td><td>{{ stats.top10 }}</td></tr>
+            <tr><td>Top 100 Finishes</td><td>{{ stats.top100 }}</td></tr>
+        </table>
+    {% endif %}
+
 </body>
 </html>

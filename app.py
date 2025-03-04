@@ -1,52 +1,37 @@
 from flask import Flask, render_template, request
 import pandas as pd
-from players import plot_player_ranking, analyze_player_performance, players_by_participation
-from tournaments import plot_num_of_players, average_score_of_winner
+from tournaments import (
+    plot_num_of_players, average_score_of_winner, average_score_of_top_10,
+    average_rating_of_top_10, skips_per_round, starting_ranks_of_winners
+)
+from players import plot_player_ranking, analyze_player_performance
 
 app = Flask(__name__)
 
+# Load data
 df = pd.read_csv("static/data.csv")
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-    player = "Hikaru Nakamura"  # Default player
-    feature = "ranking"  # Default feature
-    stats = None
-    max_players = None
-    top_participators = None
-    winner_scores = None
+    mode = request.form.get("mode", None)  # Get selected option (tournament/player)
+    player_name = request.form.get("player_name", "Hikaru Nakamura")  # Get player name input
+    stats = None  # Placeholder for player stats
 
-    if request.method == "POST":
-        feature = request.form.get("feature", "ranking")  # Get feature selection
+    if mode == "tournament":
+        # Generate tournament stats
+        plot_num_of_players(df)
+        average_score_of_winner(df)
+        average_score_of_top_10(df)
+        average_rating_of_top_10(df)
+        skips_per_round(df)
+        starting_ranks_of_winners(df)
 
-        if feature in ["ranking", "performance"]:
-            player = request.form.get("player_name", player)  # Get player name safely
+    elif mode == "player" and player_name:
+        # Generate player stats
+        plot_player_ranking(df, player_name)
+        stats = analyze_player_performance(df, player_name)
 
-            if feature == "ranking":
-                plot_player_ranking(df, player)
-
-            elif feature == "performance":
-                stats = analyze_player_performance(df, player)
-                if "error" in stats:
-                    stats = None  # Handle player not found
-
-        elif feature == "tournament":
-            plot_num_of_players(df)
-            max_players = {
-                "early": df[df["time"] == "E"].groupby("date")["Number"].max().to_dict(),
-                "late": df[df["time"] == "L"].groupby("date")["Number"].max().to_dict(),
-            }
-
-        elif feature == "participation":
-            top_participators = players_by_participation(df)
-
-        elif feature == "winner_scores":
-            average_score_of_winner(df)
-            winner_scores = "static/winner_score.png"
-
-    return render_template("index.html", player=player, stats=stats, feature=feature,
-                            max_players=max_players, top_participators=top_participators,
-                            winner_scores=winner_scores)
+    return render_template("index.html", mode=mode, player_name=player_name, stats=stats)
 
 if __name__ == "__main__":
     app.run(debug=True)
