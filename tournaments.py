@@ -63,7 +63,7 @@ def average_score_of_top_10(df):
     plt.legend()
     plt.xticks(early_scores["date"][::2], rotation=45)
     plt.yticks(np.arange(8.5, 10.5, 0.5))
-    plt.title("Score of the Winner over Time")
+    plt.title("Average Score of top 10 over Time")
     plt.xlabel("Date")
     plt.ylabel("Score")
     plt.grid(True, linestyle='--', linewidth=0.5, alpha=0.7)
@@ -122,5 +122,3 @@ def starting_ranks_of_winners(df):
 
     plt.savefig("static/starting_ranks.png")
     plt.close()
-
-starting_ranks_of_winners(pd.read_csv("static/data.csv"))
