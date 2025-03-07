@@ -3,7 +3,7 @@ import pandas as pd
 from tournaments import (
     plot_num_of_players, average_score_of_winner, average_score_of_top_10,
     average_rating_of_top_10, skips_per_round, starting_ranks_of_winners,
-    players_by_participation
+    players_by_participation, top_3_finishers
 )
 from players import plot_player_ranking, analyze_player_performance
 
@@ -27,6 +27,7 @@ def home():
         average_rating_of_top_10(df)
         skips_per_round(df)
         starting_ranks_of_winners(df)
+        top_3_finishers(df)
         top_participators = players_by_participation(df)
 
     elif mode == "player" and player_name:

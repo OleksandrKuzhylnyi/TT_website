@@ -17,7 +17,7 @@ def plot_num_of_players(df):
     plt.plot(num_of_players_L.index, num_of_players_L.values, marker='s', markersize=5, 
              label="Late Tournament", color='red')
     plt.xlabel("Date")
-    plt.ylabel("Number of Players")
+    plt.ylabel("place of Players")
     plt.title("Number of Players in Titled Tuesday (Early vs. Late)")
     plt.xticks(num_of_players_E.index[::2], rotation=45)
     plt.legend()
@@ -89,8 +89,8 @@ def average_rating_of_top_10(df):
     plt.xlabel("Date")
     plt.ylabel("Rating")
     plt.grid(True, linestyle='--', linewidth=0.5, alpha=0.7)
-    plt.tight_layout()
     plt.gca().set_facecolor('#f9f9f9')
+    plt.tight_layout()
     plt.savefig("static/top_10_rating.png")
     plt.close()
 
@@ -135,3 +135,28 @@ def starting_ranks_of_winners(df):
 def players_by_participation(df, limit=100):
     top_participators = df["real_name"].value_counts()
     return top_participators[:limit].to_dict()
+
+def top_3_finishers(df):
+    first_places = df[df["place"] == 1]
+    first = first_places["real_name"].value_counts()
+    second_places = df[df["place"] == 2]
+    second = second_places["real_name"].value_counts()
+    third_places = df[df["place"] == 3]
+    third = third_places["real_name"].value_counts()
+    winners = pd.merge(first, second, how='outer', on="real_name", suffixes=('_1', '_2'))
+    winners = pd.merge(winners, third, how='outer', on="real_name")
+    winners.fillna(0, inplace=True)
+    winners.reset_index(inplace=True)
+    winners.rename(columns={"count_1" : '1', "count_2" : '2', "count" : '3'}, inplace=True)
+    winners.sort_values(by=["1", "2", "3"], inplace=True)
+    colors = ["gold", "silver", "brown"]
+    winners.set_index("real_name").plot(kind='barh', stacked=True, color=colors, figsize=(16,20))
+    plt.title("Titled Tuesday Top 3 Finishers", fontsize=20)
+    plt.xticks(np.arange(0, 60, 5))
+    plt.xlabel("Number of medals")
+    plt.ylabel("Player")
+    plt.grid(axis='x', linestyle='--', color='royalblue', alpha=0.7)
+    plt.gca().set_facecolor('#f9f9f9')
+    plt.tight_layout()
+    plt.savefig("static/top_3_finishers.png")
+    plt.close()
