@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.ticker import PercentFormatter
 
 
 def plot_num_of_players(df):
@@ -106,19 +105,28 @@ def skips_per_round(df):
     plt.title("Percent of Skips per Round")
     plt.xlabel("Round")
     plt.yticks([])
+    plt.gca().set_facecolor('#f9f9f9')
     plt.savefig("static/skips_per_round.png")
     plt.close()
 
+
 def starting_ranks_of_winners(df):
     starting_rankings = df[df["place"] == 1]["starting_rank"]
-    bins = [0, 1, 2, 3, 5, 10, 20, 50, float("inf")]
-    labels = ["1", "2", "3", "4-5", "6-10", "11-20", "21-50", "50+"]
+    bins = [0, 1, 2, 3, 5, 10, 20, float("inf")]
+    labels = ["1", "2", "3", "4-5", "6-10", "11-20", "20+"]
     categories = pd.cut(starting_rankings, bins=bins, labels=labels, right=True)
     category_counts = categories.value_counts().sort_index()
+    category_percents = category_counts / category_counts.sum() * 100
 
     plt.figure(figsize=(8, 8))
-    plt.pie(category_counts, labels=category_counts.index, autopct="%1.1f%%", startangle=140, colors=plt.cm.Paired.colors)
-    plt.title("Proportion of Winners by Starting Rank")
+    plt.bar(category_counts.index, category_percents, color='royalblue', edgecolor='black', alpha=0.8)
+    plt.title("Winners by Starting Rank")
+    plt.xlabel("Starting Rank")
+    plt.ylabel("Wins (%)")
+    plt.tight_layout()
+    plt.gca().set_facecolor('#f9f9f9')
+    for i, (percent, value) in enumerate(zip(category_percents, category_counts)):
+        plt.text(i, percent + 0.2, f"{int(value)}", ha="center", fontsize=10)
 
-    plt.savefig("static/starting_ranks.png")
+    plt.savefig("static/winners_by_starting_rank.png")
     plt.close()
