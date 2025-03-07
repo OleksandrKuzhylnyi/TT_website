@@ -70,7 +70,3 @@ def analyze_player_performance(df, player="Hikaru Nakamura") -> dict:
     }
 
     return results
-
-def players_by_participation(df, limit=100):
-    top_participators = df["real_name"].value_counts()
-    return top_participators[:limit].to_dict()

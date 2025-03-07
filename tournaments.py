@@ -130,3 +130,8 @@ def starting_ranks_of_winners(df):
 
     plt.savefig("static/winners_by_starting_rank.png")
     plt.close()
+
+
+def players_by_participation(df, limit=100):
+    top_participators = df["real_name"].value_counts()
+    return top_participators[:limit].to_dict()
