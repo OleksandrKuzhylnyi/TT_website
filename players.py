@@ -2,29 +2,66 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
+def get_color(rank):
+    if rank == 1:
+        return 'gold'
+    elif rank == 2:
+        return 'silver'
+    elif rank == 3:
+        return 'brown'
+    elif 4 <= rank <= 5:
+        return 'lime'
+    elif 6 <= rank <= 10:
+        return 'aqua'
+    elif 11 <= rank <= 20:
+        return 'red'
+    elif 21 <= rank <= 50:
+        return 'green'
+    elif 51 <= rank <= 100:
+        return 'blue'
+    elif 101 <= rank <= 200:
+        return 'darkorange'
+    elif 201 <= rank <= 300:
+        return 'purple'
+    elif 301 <= rank <= 400:
+        return 'magenta'
+    elif 401 <= rank <= 500:
+        return 'khaki'
+    else:
+        return 'black'  # For rankings worse than 500
+
+
 def plot_player_ranking(df, player="Hikaru Nakamura"):
     df_player = df[df["real_name"] == player]
     rankings_by_date = list(zip(df_player["date"].values, df_player["place"].values))
     rankings_by_date.sort()
-    color_map = {1: 'yellow', 2: 'lightgrey', 3: 'brown', 4: 'red', 5: 'red',
-                 6: 'green', 7: 'green', 8: 'green', 9: 'green', 10: 'green'}
-    colors = [color_map.get(rank, 'blue') for _, rank in rankings_by_date]
-    plt.figure(figsize=(14, 8))
-    plt.scatter(*zip(*rankings_by_date), c=colors, alpha=0.5)
-    plt.xticks(df_player["date"].values, rotation=45)
+    colors = [get_color(rank) for _, rank in rankings_by_date]
+    plt.figure(figsize=(16, 12))
+    plt.scatter(*zip(*rankings_by_date), c=colors)
+    dates = sorted(df_player["date"].unique())
+    plt.xticks(dates[::2], rotation=45)
     plt.title(f"Rankings of {player}")
     plt.ylabel("Ranking")
+    plt.yscale("log")
+    plt.yticks([1, 2, 3, 5, 10, 20, 50, 100, 200, 300, 400, 500], [1, 2, 3, 5, 10, 20, 50, 100, 200, 300, 400, 500])
 
     handles = [
-        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='yellow', markersize=10, label='1st'),
-        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='lightgrey', markersize=10, label='2nd'),
-        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='brown', markersize=10, label='3rd'),
-        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='red', markersize=10, label='4th or 5th'),
-        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='green', markersize=10, label='6th to 10th'),
-        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='blue', markersize=10, label='11th or worse')
+        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='gold', markersize=10, label='1'),
+        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='silver', markersize=10, label='2'),
+        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='brown', markersize=10, label='3'),
+        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='lime', markersize=10, label='4 to 5'),
+        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='aqua', markersize=10, label='6 to 10'),
+        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='red', markersize=10, label='11 to 20'),
+        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='green', markersize=10, label='21 to 50'),
+        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='blue', markersize=10, label='51 to 100'),
+        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='darkorange', markersize=10, label='101 to 200'),
+        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='purple', markersize=10, label='201 to 300'),
+        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='magenta', markersize=10, label='301 to 400'),
+        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='khaki', markersize=10, label='401 to 500'),
+        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='black', markersize=10, label='500+')
     ]
 
-    plt.legend(handles=handles, loc='center right')
+    plt.legend(handles=handles, title="Ranking", loc="best")
     plt.savefig(f"static/{player.replace(' ', '_')}_ranking.png")
     plt.close()
 
