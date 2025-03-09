@@ -1,4 +1,6 @@
 import pandas as pd
 
-def slice_by_date(df, start="2000-01-01", stop="2030-01-01"):
+def slice_by_date(df, start=None, stop=None):
+    start = start or df['date'].min()
+    stop = stop or df['date'].max()
     return df[(df['date'] >= start) & (df['date'] <= stop)]

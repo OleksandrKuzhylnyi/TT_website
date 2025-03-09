@@ -16,17 +16,19 @@
             <option value="tournament" {% if mode=='tournament' %}selected{% endif %}>Tournaments</option>
             <option value="player" {% if mode=='player' %}selected{% endif %}>Player</option>
         </select>
-    </form>
-
-    <!-- Show player input field if 'Player' mode is selected -->
-    {% if mode == "player" %}
-    <form method="POST">
-        <input type="hidden" name="mode" value="player">
+        <br>
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
+        <br>
+        <label for="stop_date">Stop Date:</label>
+        <input type="date" id="stop_date" name="stop_date" value="{{ stop_date }}">
+        <br>
+        {% if mode == "player" %}
         <label for="player_name">Enter Player Name:</label>
         <input type="text" id="player_name" name="player_name" value="{{ player_name }}" required>
+        {% endif %}
         <button type="submit">Show Stats</button>
     </form>
-    {% endif %}
 
     <!-- Tournament Statistics -->
     {% if mode == "tournament" %}

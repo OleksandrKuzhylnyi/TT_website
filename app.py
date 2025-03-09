@@ -6,18 +6,23 @@ from tournaments import (
     players_by_participation, top_3_finishers
 )
 from players import plot_player_ranking, analyze_player_performance
+from general import slice_by_date
 
 app = Flask(__name__)
 
 # Load data
-df = pd.read_csv("static/data.csv")
+data = pd.read_csv("static/data.csv")
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-    mode = request.form.get("mode", None)  # Get selected option (tournament/player)
-    player_name = request.form.get("player_name", "Hikaru Nakamura")  # Get player name input
+    mode = request.form.get("mode", "tournament")  # Get selected option (tournament/player)
+    player_name = request.form.get("player_name", "Hikaru Nakamura")
+    start_date = request.form.get("start_date", data["date"].min())
+    stop_date = request.form.get("stop_date", data["date"].max())
     stats = None
     top_participators = None
+
+    df = slice_by_date(data, start_date, stop_date)
 
     if mode == "tournament":
         # Generate tournament stats
@@ -35,7 +40,8 @@ def home():
         plot_player_ranking(df, player_name)
         stats = analyze_player_performance(df, player_name)
 
-    return render_template("index.html", mode=mode, player_name=player_name, stats=stats, top_participators=top_participators)
+    return render_template("index.html", mode=mode, player_name=player_name, stats=stats,
+                            top_participators=top_participators, start_date=start_date, stop_date=stop_date)
 
 if __name__ == "__main__":
     app.run(debug=True)
