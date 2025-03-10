@@ -145,10 +145,12 @@ def top_3_finishers(df):
     winners.reset_index(inplace=True)
     winners.rename(columns={"count_1" : '1', "count_2" : '2', "count" : '3'}, inplace=True)
     winners.sort_values(by=["1", "2", "3"], inplace=True)
+    max_medals = winners.iloc[-1, 1:].sum()
+    stop = (max_medals // 10) * 10 + 10
     colors = ["gold", "silver", "brown"]
     winners.set_index("real_name").plot(kind='barh', stacked=True, color=colors, figsize=(12,20))
     plt.title("Titled Tuesday Top 3 Finishers", fontsize=20)
-    plt.xticks(np.arange(0, 60, 5))
+    plt.xticks(np.arange(0, stop, 5))
     plt.xlabel("Number of medals")
     plt.ylabel("Player")
     plt.grid(axis='x', linestyle='--', color='royalblue', alpha=0.7)
