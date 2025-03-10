@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chess Stats</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <h1>Titled Tuesday Statistics</h1>
@@ -42,11 +43,11 @@
         <img src="{{ url_for('static', filename='top_3_finishers.png') }}" alt="Top 3 Finishers">
         <!-- Top Participators -->
         <h2>Top Participators</h2>
-        <ul>
+        <ol>
         {% for name, count in top_participators.items() %}
-        <li>{{ name }}: {{ count }} participations</li>
+        <li style="text-align: left;">{{ name }}: {{ count }} participations</li>
         {% endfor %}
-        </ul>
+        </ol>
     {% endif %}
 
     <!-- Player Statistics -->

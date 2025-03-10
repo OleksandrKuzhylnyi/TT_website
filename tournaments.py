@@ -16,8 +16,7 @@ def plot_num_of_players(df):
              label="Early Tournament", color='blue')
     plt.plot(num_of_players_L.index, num_of_players_L.values, marker='s', markersize=5, 
              label="Late Tournament", color='red')
-    plt.xlabel("Date")
-    plt.ylabel("place of Players")
+    plt.ylabel("Number of Players")
     plt.title("Number of Players in Titled Tuesday (Early vs. Late)")
     plt.xticks(num_of_players_E.index[::2], rotation=45)
     plt.legend()
@@ -40,7 +39,6 @@ def average_score_of_winner(df):
     plt.xticks(early_scores["date"][::2], rotation=45)
     plt.yticks(np.arange(9.5, 11.5, 0.5))
     plt.title("Score of the Winner over Time")
-    plt.xlabel("Date")
     plt.ylabel("Score")
     plt.grid(True, linestyle='--', linewidth=0.5, alpha=0.7)
     plt.tight_layout()
@@ -63,7 +61,6 @@ def average_score_of_top_10(df):
     plt.xticks(early_scores["date"][::2], rotation=45)
     plt.yticks(np.arange(8.5, 10.5, 0.5))
     plt.title("Average Score of top 10 over Time")
-    plt.xlabel("Date")
     plt.ylabel("Score")
     plt.grid(True, linestyle='--', linewidth=0.5, alpha=0.7)
     plt.tight_layout()
@@ -86,7 +83,6 @@ def average_rating_of_top_10(df):
     plt.xticks(early_rating["date"][::2], rotation=45)
     plt.yticks(np.arange(2950, 3200, 50))
     plt.title("Average Rating of Top 10 over Time")
-    plt.xlabel("Date")
     plt.ylabel("Rating")
     plt.grid(True, linestyle='--', linewidth=0.5, alpha=0.7)
     plt.gca().set_facecolor('#f9f9f9')
@@ -106,6 +102,7 @@ def skips_per_round(df):
     plt.xlabel("Round")
     plt.yticks([])
     plt.gca().set_facecolor('#f9f9f9')
+    plt.tight_layout()
     plt.savefig("static/skips_per_round.png")
     plt.close()
 
@@ -123,11 +120,10 @@ def starting_ranks_of_winners(df):
     plt.title("Winners by Starting Rank")
     plt.xlabel("Starting Rank")
     plt.ylabel("Wins (%)")
-    plt.tight_layout()
     plt.gca().set_facecolor('#f9f9f9')
     for i, (percent, value) in enumerate(zip(category_percents, category_counts)):
         plt.text(i, percent + 0.2, f"{int(value)}", ha="center", fontsize=10)
-
+    plt.tight_layout()
     plt.savefig("static/winners_by_starting_rank.png")
     plt.close()
 
@@ -150,7 +146,7 @@ def top_3_finishers(df):
     winners.rename(columns={"count_1" : '1', "count_2" : '2', "count" : '3'}, inplace=True)
     winners.sort_values(by=["1", "2", "3"], inplace=True)
     colors = ["gold", "silver", "brown"]
-    winners.set_index("real_name").plot(kind='barh', stacked=True, color=colors, figsize=(16,20))
+    winners.set_index("real_name").plot(kind='barh', stacked=True, color=colors, figsize=(12,20))
     plt.title("Titled Tuesday Top 3 Finishers", fontsize=20)
     plt.xticks(np.arange(0, 60, 5))
     plt.xlabel("Number of medals")
