@@ -57,6 +57,9 @@
 
         <table border="1">
             <tr><th>Statistic</th><th>Value</th></tr>
+            <tr><td>Number of Tournaments</td><td>{{ stats.tournaments_count }}</td></tr>
+            <tr><td>First Tournament</td><td>{{ stats.first_tournament }}</td></tr>
+            <tr><td>Last Tournament</td><td>{{ stats.last_tournament }}</td></tr>
             <tr><td>Total Possible Games</td><td>{{ stats.max_possible_games }}</td></tr>
             <tr><td>Games Played</td><td>{{ stats.real_number_of_games }}</td></tr>
             <tr><td>Wins</td><td>{{ stats.wins }}</td></tr>
@@ -71,6 +74,8 @@
             <tr><td>Top 5 Finishes</td><td>{{ stats.top5 }}</td></tr>
             <tr><td>Top 10 Finishes</td><td>{{ stats.top10 }}</td></tr>
             <tr><td>Top 100 Finishes</td><td>{{ stats.top100 }}</td></tr>
+            <tr><td>Mean Place</td><td>{{ stats.mean_place|round(2) }}</td></tr>
+            <tr><td>Median Place</td><td>{{ stats.median_place }}</td></tr>
         </table>
     {% endif %}
 

@@ -72,6 +72,10 @@ def analyze_player_performance(df, player="Hikaru Nakamura") -> dict:
     """
     player_df = df[df["real_name"] == player]
 
+    tournaments_count = player_df["tournament"].nunique()
+    first_tournament = player_df["date"].min()
+    last_tournament = player_df["date"].max()
+
     max_possible_games = player_df.shape[0] * 11
     rounds = player_df.loc[:, "round_1":"round_11"].columns
     wins = sum([player_df[round].str.startswith("W").sum() for round in rounds])
@@ -87,8 +91,14 @@ def analyze_player_performance(df, player="Hikaru Nakamura") -> dict:
     top10 = player_df[player_df["place"] <= 10].shape[0]
     top100 = player_df[player_df["place"] <= 100].shape[0]
 
+    mean_place = player_df["place"].mean()
+    median_place = player_df["place"].median()
+
     results = {
         "player": player,
+        "tournaments_count": tournaments_count,
+        "first_tournament": first_tournament,
+        "last_tournament": last_tournament,
         "max_possible_games": max_possible_games,
         "skipped_games": skipped_games,
         "real_number_of_games": number_of_games,
@@ -105,6 +115,8 @@ def analyze_player_performance(df, player="Hikaru Nakamura") -> dict:
         "top5": top5,
         "top10": top10,
         "top100": top100,
+        "mean_place": mean_place,
+        "median_place": median_place
     }
 
     return results
