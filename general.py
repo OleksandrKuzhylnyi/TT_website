@@ -1,6 +1,16 @@
+from sqlalchemy import create_engine
 import pandas as pd
 
-def slice_by_date(df, start=None, stop=None):
-    start = start or df['date'].min()
-    stop = stop or df['date'].max()
-    return df[(df['date'] >= start) & (df['date'] <= stop)]
+engine = create_engine("sqlite:///chess.db")
+
+def slice_by_date(start=None, stop=None):
+    query = "SELECT * FROM tournaments WHERE 1=1"
+
+    if start:
+        query += f" AND date >= '{start}'"
+    if stop:
+        query += f" AND date <= '{stop}'"
+
+    df = pd.read_sql(query, engine)
+    df['date'] = pd.to_datetime(df['date'])
+    return df

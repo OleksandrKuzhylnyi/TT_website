@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+from sqlalchemy import create_engine, text
 import pandas as pd
 from tournaments import (
     plot_num_of_players, average_score_of_winner, average_score_of_top_10,
@@ -10,11 +11,14 @@ from general import slice_by_date
 
 app = Flask(__name__)
 
-# Load data
-data = pd.read_csv("static/data.csv")
+engine = create_engine("sqlite:///chess.db")
 
 @app.route("/", methods=["GET", "POST"])
 def home():
+    with engine.connect() as conn:
+        data = pd.read_sql("SELECT * FROM tournaments", conn)
+        data['date'] = pd.to_datetime(data['date'])
+        
     mode = request.form.get("mode", "tournament")  # Get selected option (tournament/player)
     player_name = request.form.get("player_name", "Hikaru Nakamura")
     start_date = request.form.get("start_date", data["date"].min())
