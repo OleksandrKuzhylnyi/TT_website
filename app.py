@@ -21,12 +21,12 @@ def home():
         
     mode = request.form.get("mode", "tournament")  # Get selected option (tournament/player)
     player_name = request.form.get("player_name", "Hikaru Nakamura")
-    start_date = request.form.get("start_date", data["date"].min())
-    stop_date = request.form.get("stop_date", data["date"].max())
+    start_date = request.form.get("start_date", data["date"].min().strftime('%Y-%m-%d'))
+    stop_date = request.form.get("stop_date", data["date"].max().strftime('%Y-%m-%d'))
     stats = None
     top_participators = None
 
-    df = slice_by_date(data, start_date, stop_date)
+    df = slice_by_date(start_date, stop_date)
 
     if mode == "tournament":
         # Generate tournament stats
