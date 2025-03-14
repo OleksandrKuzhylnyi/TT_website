@@ -107,7 +107,7 @@ def skips_per_round(df):
     plt.close()
 
 
-def starting_ranks_of_winners(df):
+def bar_of_winners_by_starting_rank(df):
     starting_rankings = df[df["place"] == 1]["starting_rank"]
     bins = [0, 1, 2, 3, 5, 10, 20, float("inf")]
     labels = ["1", "2", "3", "4-5", "6-10", "11-20", "20+"]
@@ -127,6 +127,21 @@ def starting_ranks_of_winners(df):
     plt.savefig("static/pictures/winners_by_starting_rank.png")
     plt.close()
 
+
+def winners_by_rating(df):
+    ratings = df[df["place"] == 1]["rating"]
+    bins = range(2800, 3301, 50)
+    plt.figure(figsize=(8, 8))
+    plt.hist(ratings, bins=bins, color='royalblue', edgecolor='black', alpha=0.8)
+    plt.title("Winners by Rating")
+    plt.xticks(bins)
+    plt.ylabel("Wins (%)")
+    plt.gca().set_facecolor('#f9f9f9')
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    plt.tight_layout()
+    plt.savefig("static/pictures/winners_by_rating.png")
+    plt.close()
+    
 
 def players_by_participation(df, limit=100):
     top_participators = df["real_name"].value_counts()

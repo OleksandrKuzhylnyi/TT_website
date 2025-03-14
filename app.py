@@ -3,8 +3,8 @@ from sqlalchemy import create_engine, text
 import pandas as pd
 from tournaments import (
     plot_num_of_players, average_score_of_winner, average_score_of_top_10,
-    average_rating_of_top_10, skips_per_round, starting_ranks_of_winners,
-    players_by_participation, top_3_finishers
+    average_rating_of_top_10, skips_per_round, bar_of_winners_by_starting_rank,
+    winners_by_rating, players_by_participation, top_3_finishers
 )
 from players import plot_player_ranking, analyze_player_performance
 from general import slice_by_date
@@ -35,7 +35,8 @@ def home():
         average_score_of_top_10(df)
         average_rating_of_top_10(df)
         skips_per_round(df)
-        starting_ranks_of_winners(df)
+        bar_of_winners_by_starting_rank(df)
+        winners_by_rating(df)
         top_3_finishers(df)
         top_participators = players_by_participation(df)
 
