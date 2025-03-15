@@ -8,3 +8,19 @@ body {
 h1 {
     color: #333;
 }
+
+.table-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.table-container table {
+    margin: 10px;
+    border-collapse: collapse;
+}
+.table-container th, .table-container td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: left;
+}

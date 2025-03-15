@@ -73,8 +73,8 @@ def analyze_player_performance(df, player="Hikaru Nakamura") -> dict:
     player_df = df[df["real_name"] == player]
 
     tournaments_count = player_df["tournament"].nunique()
-    first_tournament = player_df["date"].min()
-    last_tournament = player_df["date"].max()
+    first_tournament = player_df["date"].min().strftime("%Y-%m-%d")
+    last_tournament = player_df["date"].max().strftime("%Y-%m-%d")
 
     max_possible_games = player_df.shape[0] * 11
     rounds = player_df.loc[:, "round_1":"round_11"].columns

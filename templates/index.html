@@ -27,6 +27,9 @@
         {% if mode == "player" %}
         <label for="player_name">Enter Player Name:</label>
         <input type="text" id="player_name" name="player_name" value="{{ player_name }}" required>
+        <br>
+        <label for="player_to_compare">Enter Player to Compare with:</label>
+        <input type="text" id="player_to_compare" name="player_to_compare" value="{{ player_to_compare }}">
         {% endif %}
         <button type="submit">Show Stats</button>
     </form>
@@ -54,31 +57,135 @@
     <!-- Player Statistics -->
     {% if mode == "player" and stats %}
         <h2>Performance Summary for {{ player_name }}</h2>
-        <img src="{{ url_for('static', filename='pictures/' + player_name.replace(' ', '_') + '_ranking.png') }}" alt="Player Ranking">
 
-        <table border="1">
-            <tr><th>Statistic</th><th>Value</th></tr>
-            <tr><td>Number of Tournaments</td><td>{{ stats.tournaments_count }}</td></tr>
-            <tr><td>First Tournament</td><td>{{ stats.first_tournament }}</td></tr>
-            <tr><td>Last Tournament</td><td>{{ stats.last_tournament }}</td></tr>
-            <tr><td>Total Possible Games</td><td>{{ stats.max_possible_games }}</td></tr>
-            <tr><td>Games Played</td><td>{{ stats.real_number_of_games }}</td></tr>
-            <tr><td>Wins</td><td>{{ stats.wins }}</td></tr>
-            <tr><td>Draws</td><td>{{ stats.draws }}</td></tr>
-            <tr><td>Losses</td><td>{{ stats.losses }}</td></tr>
-            <tr><td>Win Percentage</td><td>{{ stats.percent_of_wins|round(2) }}%</td></tr>
-            <tr><td>Draw Percentage</td><td>{{ stats.percent_of_draws|round(2) }}%</td></tr>
-            <tr><td>Loss Percentage</td><td>{{ stats.percent_of_losses|round(2) }}%</td></tr>
-            <tr><td>First Place Finishes</td><td>{{ stats.first_place }}</td></tr>
-            <tr><td>Second Place Finishes</td><td>{{ stats.second_place }}</td></tr>
-            <tr><td>Third Place Finishes</td><td>{{ stats.third_place }}</td></tr>
-            <tr><td>Top 5 Finishes</td><td>{{ stats.top5 }}</td></tr>
-            <tr><td>Top 10 Finishes</td><td>{{ stats.top10 }}</td></tr>
-            <tr><td>Top 100 Finishes</td><td>{{ stats.top100 }}</td></tr>
-            <tr><td>Mean Place</td><td>{{ stats.mean_place|round(2) }}</td></tr>
-            <tr><td>Median Place</td><td>{{ stats.median_place }}</td></tr>
-        </table>
+        <div class="table-container">
+            {% if stats_to_compare %}
+            <table>
+                <tr>
+                    <th>Statistic</th>
+                    <th>{{ player_name }}</th>
+                    <th>{{ player_to_compare }}</th>
+                </tr>
+                <tr>
+                    <td>Number of Tournaments</td>
+                    <td>{{ stats.tournaments_count }}</td>
+                    <td>{{ stats_to_compare.tournaments_count }}</td>
+                </tr>
+                <tr>
+                    <td>First Tournament</td>
+                    <td>{{ stats.first_tournament }}</td>
+                    <td>{{ stats_to_compare.first_tournament }}</td>
+                </tr>
+                <tr>
+                    <td>Last Tournament</td>
+                    <td>{{ stats.last_tournament }}</td>
+                    <td>{{ stats_to_compare.last_tournament }}</td>
+                </tr>
+                <tr>
+                    <td>Total Possible Games</td>
+                    <td>{{ stats.max_possible_games }}</td>
+                    <td>{{ stats_to_compare.max_possible_games }}</td>
+                </tr>
+                <tr>
+                    <td>Games Played</td>
+                    <td>{{ stats.real_number_of_games }}</td>
+                    <td>{{ stats_to_compare.real_number_of_games }}</td>
+                </tr>
+                <tr>
+                    <td>Wins</td>
+                    <td>{{ stats.wins }}</td>
+                    <td>{{ stats_to_compare.wins }}</td>
+                </tr>
+                <tr>
+                    <td>Draws</td>
+                    <td>{{ stats.draws }}</td>
+                    <td>{{ stats_to_compare.draws }}</td>
+                </tr>
+                <tr>
+                    <td>Losses</td>
+                    <td>{{ stats.losses }}</td>
+                    <td>{{ stats_to_compare.losses }}</td>
+                </tr>
+                <tr>
+                    <td>Win Percentage</td>
+                    <td>{{ stats.percent_of_wins|round(2) }}%</td>
+                    <td>{{ stats_to_compare.percent_of_wins|round(2) }}%</td>
+                </tr>
+                <tr>
+                    <td>Draw Percentage</td>
+                    <td>{{ stats.percent_of_draws|round(2) }}%</td>
+                    <td>{{ stats_to_compare.percent_of_draws|round(2) }}%</td>
+                </tr>
+                <tr>
+                    <td>Loss Percentage</td>
+                    <td>{{ stats.percent_of_losses|round(2) }}%</td>
+                    <td>{{ stats_to_compare.percent_of_losses|round(2) }}%</td>
+                </tr>
+                <tr>
+                    <td>First Place Finishes</td>
+                    <td>{{ stats.first_place }}</td>
+                    <td>{{ stats_to_compare.first_place }}</td>
+                </tr>
+                <tr>
+                    <td>Third Place Finishes</td>
+                    <td>{{ stats.third_place }}</td>
+                    <td>{{ stats_to_compare.third_place }}</td>
+                </tr>
+                <tr>
+                    <td>Top 5 Finishes</td>
+                    <td>{{ stats.top5 }}</td>
+                    <td>{{ stats_to_compare.top5 }}</td>
+                </tr>
+                <tr>
+                    <td>Top 10 Finishes</td>
+                    <td>{{ stats.top10 }}</td>
+                    <td>{{ stats_to_compare.top10 }}</td>
+                </tr>
+                <tr>
+                    <td>Top 100 Finishes</td>
+                    <td>{{ stats.top100 }}</td>
+                    <td>{{ stats_to_compare.top100 }}</td>
+                </tr>
+                <tr>
+                    <td>Mean Place</td>
+                    <td>{{ stats.mean_place|round(2) }}</td>
+                    <td>{{ stats_to_compare.mean_place|round(2) }}</td>
+                </tr>
+                <tr>
+                    <td>Median Place</td>
+                    <td>{{ stats.median_place }}</td>
+                    <td>{{ stats_to_compare.median_place }}</td>
+                </tr>
+            </table>
+
+            {% else %}
+            <table>
+                <tr><th>Statistic</th><th>{{ player_name }}</th></tr>
+                <tr><td>Number of Tournaments</td><td>{{ stats.tournaments_count }}</td></tr>
+                <tr><td>First Tournament</td><td>{{ stats.first_tournament }}</td></tr>
+                <tr><td>Last Tournament</td><td>{{ stats.last_tournament }}</td></tr>
+                <tr><td>Total Possible Games</td><td>{{ stats.max_possible_games }}</td></tr>
+                <tr><td>Games Played</td><td>{{ stats.real_number_of_games }}</td></tr>
+                <tr><td>Wins</td><td>{{ stats.wins }}</td></tr>
+                <tr><td>Draws</td><td>{{ stats.draws }}</td></tr>
+                <tr><td>Losses</td><td>{{ stats.losses }}</td></tr>
+                <tr><td>Win Percentage</td><td>{{ stats.percent_of_wins|round(2) }}%</td></tr>
+                <tr><td>Draw Percentage</td><td>{{ stats.percent_of_draws|round(2) }}%</td></tr>
+                <tr><td>Loss Percentage</td><td>{{ stats.percent_of_losses|round(2) }}%</td></tr>
+                <tr><td>First Place Finishes</td><td>{{ stats.first_place }}</td></tr>
+                <tr><td>Second Place Finishes</td><td>{{ stats.second_place }}</td></tr>
+                <tr><td>Third Place Finishes</td><td>{{ stats.third_place }}</td></tr>
+                <tr><td>Top 5 Finishes</td><td>{{ stats.top5 }}</td></tr>
+                <tr><td>Top 10 Finishes</td><td>{{ stats.top10 }}</td></tr>
+                <tr><td>Top 100 Finishes</td><td>{{ stats.top100 }}</td></tr>
+                <tr><td>Mean Place</td><td>{{ stats.mean_place|round(2) }}</td></tr>
+                <tr><td>Median Place</td><td>{{ stats.median_place }}</td></tr>
+            </table>
+            {% endif %}
+        </div>
     {% endif %}
+
+    <img src="{{ url_for('static', filename='pictures/' + player_name.replace(' ', '_') + '_ranking.png') }}" alt="Player Ranking">
 
 </body>
 </html>
