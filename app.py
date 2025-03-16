@@ -21,12 +21,14 @@ def home():
         
     mode = request.form.get("mode", "tournament")  # Get selected option (tournament/player)
     player_name = request.form.get("player_name", "Hikaru Nakamura")
-    player_to_compare = request.form.get("player_to_compare", "Magnus Carlsen")
     start_date = request.form.get("start_date", data["date"].min().strftime('%Y-%m-%d'))
     stop_date = request.form.get("stop_date", data["date"].max().strftime('%Y-%m-%d'))
     stats = None
-    stats_to_compare = None
     top_participators = None
+    players = []
+    stats_list = []
+    players_raw = request.form.get("players", "")
+
 
     df = slice_by_date(start_date, stop_date)
 
@@ -46,15 +48,18 @@ def home():
         # Generate player stats
         plot_player_ranking(df, player_name)
         stats = analyze_player_performance(df, player_name)
-        if player_to_compare:
-            stats_to_compare = analyze_player_performance(df, player_to_compare)
+
+    elif mode == "comparison":
+        players = [p.strip() for p in players_raw.split("\n") if p.strip()]
+        for player in players:
+            stats_list.append(analyze_player_performance(df, player))
 
     return render_template("index.html",
                             mode=mode,
                             player_name=player_name,
-                            player_to_compare=player_to_compare,
                             stats=stats,
-                            stats_to_compare=stats_to_compare,
+                            players=players,
+                            stats_list=stats_list,
                             top_participators=top_participators,
                             start_date=start_date,
                             stop_date=stop_date, )
