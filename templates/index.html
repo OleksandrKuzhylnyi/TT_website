@@ -5,7 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chess Stats</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+        function addPlayer() {
+            const playerInput = document.getElementById('new_player');
+            const playersArea = document.getElementById('players_area');
+            const player = playerInput.value.trim();
+            
+            if (player) {
+                if (playersArea.value) {
+                    playersArea.value += '\n' + player;
+                } else {
+                    playersArea.value = player;
+                }
+                playerInput.value = '';
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+        const table = document.querySelector(".table-container table");
+        const rows = Array.from(table.querySelectorAll("tbody tr"));
+
+        // Iterate over each row (excluding the header row)
+        rows.forEach(row => {
+            const cells = Array.from(row.querySelectorAll(".stat"));
+            const values = cells.map(cell => parseFloat(cell.textContent));
+
+            // Find the min and max values in the row
+            const minValue = Math.min(...values);
+            const maxValue = Math.max(...values);
+
+            // Apply colors to each cell in the row
+            cells.forEach((cell, index) => {
+            const value = values[index];
+
+            if (cell.classList.contains("positive")) {
+                // Positive metrics: green for max, red for min
+                if (value === maxValue) {
+                cell.classList.add("green");
+                } else if (value === minValue) {
+                cell.classList.add("red");
+                }
+            } else if (cell.classList.contains("negative")) {
+                // Negative metrics: green for min, red for max
+                if (value === minValue) {
+                cell.classList.add("green");
+                } else if (value === maxValue) {
+                cell.classList.add("red");
+                }
+            }
+            });
+        });
+        });
+    </script>
 </head>
+
 <body>
     <h1>Titled Tuesday Statistics</h1>
 
@@ -40,8 +93,11 @@
     {% if mode == 'comparison' %}
     <form method="POST">
         <input type="hidden" name="mode" value="comparison">
-        <label>Enter Player Names (one per line):</label><br>
-        <textarea name="players" rows="5" cols="30" placeholder="e.g. Hikaru Nakamura&#10;Magnus Carlsen" required>{{ players_raw }}</textarea><br>
+        <div class="player-input-container">
+            <input type="text" id="new_player" placeholder="Enter player name">
+            <button type="button" onclick="addPlayer()">Add Player</button>
+        </div>
+        <textarea id="players_area" name="players" rows="5" cols="30" placeholder="Added players will appear here" required>{{ players_raw }}</textarea><br>
         <label for="start_date">Start Date:</label>
         <input type="date" name="start_date" value="{{ start_date }}"><br>
         <label for="stop_date">End Date:</label>
@@ -59,7 +115,7 @@
             <tr>
                 <td>Number of Tournaments</td>
                 {% for stats in stats_list %}
-                <td>{{ stats.tournaments_count }}</td>
+                <td class="stat positive">{{ stats.tournaments_count }}</td>
                 {% endfor %}
             </tr>
             <tr>
@@ -77,19 +133,19 @@
             <tr>
                 <td>Total Possible Games</td>
                 {% for stats in stats_list %}
-                <td>{{ stats.max_possible_games }}</td>
+                <td class="stat positive">{{ stats.max_possible_games }}</td>
                 {% endfor %}
             </tr>
             <tr>
                 <td>Games Played</td>
                 {% for stats in stats_list %}
-                <td>{{ stats.real_number_of_games }}</td>
+                <td class="stat positive">{{ stats.real_number_of_games }}</td>
                 {% endfor %}
             </tr>
             <tr>
                 <td>Wins</td>
                 {% for stats in stats_list %}
-                <td>{{ stats.wins }}</td>
+                <td class="stat positive">{{ stats.wins }}</td>
                 {% endfor %}
             </tr>
             <tr>
@@ -101,13 +157,13 @@
             <tr>
                 <td>Losses</td>
                 {% for stats in stats_list %}
-                <td>{{ stats.losses }}</td>
+                <td class="stat negative">{{ stats.losses }}</td>
                 {% endfor %}
             </tr>
             <tr>
                 <td>Win Percentage</td>
                 {% for stats in stats_list %}
-                <td>{{ stats.percent_of_wins|round(2) }}%</td>
+                <td class="stat positive">{{ stats.percent_of_wins|round(2) }}%</td>
                 {% endfor %}
             </tr>
             <tr>
@@ -119,55 +175,55 @@
             <tr>
                 <td>Loss Percentage</td>
                 {% for stats in stats_list %}
-                <td>{{ stats.percent_of_losses|round(2) }}%</td>
+                <td class="stat negative">{{ stats.percent_of_losses|round(2) }}%</td>
                 {% endfor %}
             </tr>
             <tr>
                 <td>First Place Finishes</td>
                 {% for stats in stats_list %}
-                <td>{{ stats.first_place }}</td>
+                <td class="stat positive">{{ stats.first_place }}</td>
                 {% endfor %}
             </tr>
             <tr>
                 <td>Second Place Finishes</td>
                 {% for stats in stats_list %}
-                <td>{{ stats.second_place }}</td>
+                <td class="stat positive">{{ stats.second_place }}</td>
                 {% endfor %}
             </tr>
             <tr>
                 <td>Third Place Finishes</td>
                 {% for stats in stats_list %}
-                <td>{{ stats.third_place }}</td>
+                <td class="stat positive">{{ stats.third_place }}</td>
                 {% endfor %}
             </tr>
             <tr>
                 <td>Top 5 Finishes</td>
                 {% for stats in stats_list %}
-                <td>{{ stats.top5 }}</td>
+                <td class="stat positive">{{ stats.top5 }}</td>
                 {% endfor %}
             </tr>
             <tr>
                 <td>Top 10 Finishes</td>
                 {% for stats in stats_list %}
-                <td>{{ stats.top10 }}</td>
+                <td class="stat positive">{{ stats.top10 }}</td>
                 {% endfor %}
             </tr>
             <tr>
                 <td>Top 100 Finishes</td>
                 {% for stats in stats_list %}
-                <td>{{ stats.top100 }}</td>
+                <td class="stat positive">{{ stats.top100 }}</td>
                 {% endfor %}
             </tr>
             <tr>
                 <td>Mean Place</td>
                 {% for stats in stats_list %}
-                <td>{{ stats.mean_place|round(2) }}</td>
+                <td class="stat negative">{{ stats.mean_place|round(2) }}</td>
                 {% endfor %}
             </tr>
             <tr>
                 <td>Median Place</td>
                 {% for stats in stats_list %}
-                <td>{{ stats.median_place }}</td>
+                <td class="stat negative">{{ stats.median_place }}</td>
                 {% endfor %}
             </tr>
         </table>

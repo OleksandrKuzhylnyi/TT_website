@@ -24,3 +24,13 @@ h1 {
     padding: 8px;
     text-align: left;
 }
+
+.green {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.red {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
