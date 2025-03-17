@@ -1,13 +1,18 @@
 import pandas as pd
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 
-# Load CSV
 df = pd.read_csv("static/data.csv")
+df['date'] = pd.to_datetime(df['date']).dt.date
 
-# Create SQLite engine (creates a file called chess.db)
-engine = create_engine("sqlite:///chess.db", echo=True)
+engine = create_engine("sqlite:///chess.db")
 
-# Save DataFrame to SQL table
 df.to_sql("tournaments", con=engine, if_exists="replace", index=False)
 
-print("Database created and data imported!")
+# Create indexes for performance
+with engine.connect() as conn:
+    conn.execute(text("CREATE INDEX IF NOT EXISTS idx_name ON tournaments (real_name)"))
+    conn.execute(text("CREATE INDEX IF NOT EXISTS idx_date ON tournaments (date)"))
+    conn.execute(text("CREATE INDEX IF NOT EXISTS idx_placement ON tournaments (place)"))
+    conn.execute(text("CREATE INDEX IF NOT EXISTS idx_time ON tournaments (time)"))
+
+print("Database created successfully.")
