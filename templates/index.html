@@ -97,7 +97,7 @@
             <input type="text" id="new_player" placeholder="Enter player name">
             <button type="button" onclick="addPlayer()">Add Player</button>
         </div>
-        <textarea id="players_area" name="players" rows="5" cols="30" placeholder="Added players will appear here" required>{{ players_raw }}</textarea><br>
+        <textarea id="players_area" name="players" rows="5" cols="30" placeholder="Added players will appear here" required>{{ players | join('\n') }}</textarea><br>
         <label for="start_date">Start Date:</label>
         <input type="date" name="start_date" value="{{ start_date }}"><br>
         <label for="stop_date">End Date:</label>
