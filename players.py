@@ -1,5 +1,7 @@
 import pandas as pd
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 def get_color(rank):
@@ -36,8 +38,7 @@ def plot_player_ranking(df, player="Hikaru Nakamura"):
     rankings_by_date = list(zip(df_player["date"].values, df_player["place"].values))
     rankings_by_date.sort()
     colors = [get_color(rank) for _, rank in rankings_by_date]
-    plt.figure(figsize=(16, 12))
-    plt.scatter(*zip(*rankings_by_date), c=colors)
+    plt.scatter(*zip(*rankings_by_date), c=colors, figure=plt.figure(figsize=(16, 12)))
     dates = sorted(df_player["date"].unique())
     plt.xticks(dates[::2], rotation=45)
     plt.title(f"Rankings of {player}")
