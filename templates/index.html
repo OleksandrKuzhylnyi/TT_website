@@ -83,7 +83,7 @@
         {% endif %}
         {% if mode == "player" %}
         <label for="player_name">Enter Player Name:</label>
-        <input type="text" id="player_name" name="player_name" value="{{ player_name }}" required>
+        <input type="text" id="player_name" name="player_name" value="{{ player_name }}" autofocus requireds>
         {% endif %}
         {% if mode != "comparison" %}
         <button type="submit">Show Stats</button>
@@ -94,7 +94,7 @@
     <form method="POST">
         <input type="hidden" name="mode" value="comparison">
         <div class="player-input-container">
-            <input type="text" id="new_player" placeholder="Enter player name">
+            <input type="text" id="new_player" placeholder="Enter player name" autofocus>
             <button type="button" onclick="addPlayer()">Add Player</button>
         </div>
         <textarea id="players_area" name="players" rows="5" cols="30" placeholder="Added players will appear here" required>{{ players | join('\n') }}</textarea><br>
@@ -140,6 +140,12 @@
                 <td>Games Played</td>
                 {% for stats in stats_list %}
                 <td class="stat positive">{{ stats.real_number_of_games }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td>Skipped Games</td>
+                {% for stats in stats_list %}
+                <td class="stat negative">{{ stats.skipped_games }}</td>
                 {% endfor %}
             </tr>
             <tr>
@@ -243,11 +249,14 @@
         <img src="{{ url_for('static', filename='pictures/top_3_finishers.png') }}" alt="Top 3 Finishers">
         <!-- Top Participators -->
         <h2>Top Participators</h2>
-        <ol>
-        {% for name, count in top_participators.items() %}
-        <li style="text-align: left;">{{ name }}: {{ count }} participations</li>
-        {% endfor %}
-        </ol>
+        <div class="table-container">
+            <table>
+                <tr><th>Rank</th><th>Player</th><th>Participations</th></tr>
+                {% for name, count in top_participators.items() %}
+                <tr><td>{{ loop.index }}</td><td>{{ name }}</td><td>{{ count }}</td></tr>
+                {% endfor %}
+            </table>
+        </div>
     {% endif %}
 
     <!-- Player Statistics -->
@@ -262,6 +271,7 @@
                 <tr><td>Last Tournament</td><td>{{ stats.last_tournament }}</td></tr>
                 <tr><td>Total Possible Games</td><td>{{ stats.max_possible_games }}</td></tr>
                 <tr><td>Games Played</td><td>{{ stats.real_number_of_games }}</td></tr>
+                <tr><td>Skipped Games</td><td>{{ stats.skipped_games }}</td></tr>
                 <tr><td>Wins</td><td>{{ stats.wins }}</td></tr>
                 <tr><td>Draws</td><td>{{ stats.draws }}</td></tr>
                 <tr><td>Losses</td><td>{{ stats.losses }}</td></tr>
