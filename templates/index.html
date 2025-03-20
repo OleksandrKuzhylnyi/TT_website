@@ -151,6 +151,12 @@
                 {% endfor %}
             </tr>
             <tr>
+                <td>Points Percentage</td>
+                {% for stats in stats_list %}
+                <td class="stat positive">{{ stats.percent_of_points|round(2) }}%</td>
+                {% endfor %}
+            </tr>
+            <tr>
                 <td>Win Percentage</td>
                 {% for stats in stats_list %}
                 <td class="stat positive">{{ stats.percent_of_wins|round(2) }}%</td>
@@ -280,6 +286,7 @@
                 <tr><td>Wins</td><td>{{ stats.wins }}</td></tr>
                 <tr><td>Draws</td><td>{{ stats.draws }}</td></tr>
                 <tr><td>Losses</td><td>{{ stats.losses }}</td></tr>
+                <tr><td>Points Percentage</td><td>{{ stats.percent_of_points|round(2) }}%</td></tr>
                 <tr><td>Win Percentage</td><td>{{ stats.percent_of_wins|round(2) }}%</td></tr>
                 <tr><td>Draw Percentage</td><td>{{ stats.percent_of_draws|round(2) }}%</td></tr>
                 <tr><td>Loss Percentage</td><td>{{ stats.percent_of_losses|round(2) }}%</td></tr>
@@ -331,6 +338,12 @@
                     <td>Losses</td>
                     {% for round in rounds_stats %}
                     <td>{{ round.losses }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Points Percentage</td>
+                    {% for round in rounds_stats %}
+                    <td>{{ round.percent_of_points|round(2) }}%</td>
                     {% endfor %}
                 </tr>
                 <tr>
