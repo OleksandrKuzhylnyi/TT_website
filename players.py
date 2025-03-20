@@ -82,8 +82,8 @@ def analyze_player_performance(df, player="Hikaru Nakamura") -> dict:
     wins = sum([player_df[round].str.startswith("W").sum() for round in rounds])
     draws = sum([player_df[round].str.startswith("D").sum() for round in rounds])
     losses = sum([player_df[round].str.startswith("L").sum() for round in rounds])
-    number_of_games = wins + draws + losses
-    skipped_games = max_possible_games - number_of_games
+    played_games = wins + draws + losses
+    skipped_games = max_possible_games - played_games
 
     first = player_df[player_df["place"] == 1].shape[0]
     second = player_df[player_df["place"] == 2].shape[0]
@@ -101,15 +101,15 @@ def analyze_player_performance(df, player="Hikaru Nakamura") -> dict:
         "first_tournament": first_tournament,
         "last_tournament": last_tournament,
         "max_possible_games": max_possible_games,
-        "real_number_of_games": number_of_games,
+        "played_games": played_games,
         "skipped_games": skipped_games,
         "wins": wins,
         "draws": draws,
         "losses": losses,
-        "percent_of_points": 100 * (wins + draws / 2) / number_of_games,
-        "percent_of_wins": 100 * wins / number_of_games,
-        "percent_of_draws": 100 * draws / number_of_games,
-        "percent_of_losses": 100 * losses / number_of_games,
+        "percent_of_points": 100 * (wins + draws / 2) / played_games,
+        "percent_of_wins": 100 * wins / played_games,
+        "percent_of_draws": 100 * draws / played_games,
+        "percent_of_losses": 100 * losses / played_games,
         "first_place": first,
         "second_place": second,
         "third_place": third,
@@ -119,5 +119,43 @@ def analyze_player_performance(df, player="Hikaru Nakamura") -> dict:
         "mean_place": mean_place,
         "median_place": median_place
     }
+
+    return results
+
+
+def analyze_perfomance_by_rounds(df, player="Hikaru Nakamura") -> dict:
+    """
+    Analyzes the performance of a specific player by rounds.
+    """
+    player_df = df[df["real_name"] == player]
+
+    rounds = [f"round_{i}" for i in range(1, 12)]
+    wins_draws_losses = [
+        (
+        player_df[round].str.startswith("W").sum(),
+        player_df[round].str.startswith("D").sum(),
+        player_df[round].str.startswith("L").sum()
+        )
+        for round in rounds
+    ]
+    wins, draws, losses = zip(*wins_draws_losses)
+    max_possible_games = player_df.shape[0]
+    played_games = [wins + draws + losses for wins, draws, losses in wins_draws_losses]
+    skipped_games = [max_possible_games - games for games in played_games]
+
+    results = [
+        {
+            "played_games": played_games[i],
+            "skipped_games": skipped_games[i],
+            "wins": wins[i],
+            "draws": draws[i],
+            "losses": losses[i],
+            "percent_of_points": 100 * (wins[i] + draws[i] / 2) / played_games[i],
+            "percent_of_wins": 100 * wins[i] / played_games[i],
+            "percent_of_draws": 100 * draws[i] / played_games[i],
+            "percent_of_losses": 100 * losses[i] / played_games[i],
+        }
+        for i in range(11)
+    ]
 
     return results

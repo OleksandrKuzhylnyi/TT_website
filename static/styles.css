@@ -22,7 +22,7 @@ h1 {
 .table-container th, .table-container td {
     border: 1px solid black;
     padding: 8px;
-    text-align: left;
+    text-align: center;
 }
 
 .green {

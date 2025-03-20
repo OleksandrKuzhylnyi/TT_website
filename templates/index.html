@@ -70,24 +70,8 @@
             <option value="tournament" {% if mode=='tournament' %}selected{% endif %}>Tournaments</option>
             <option value="player" {% if mode=='player' %}selected{% endif %}>Player</option>
             <option value="comparison" {% if mode=='comparison' %}selected{% endif %}>Compare Players</option>
-
         </select>
         <br>
-        {% if mode != "comparison" %}
-        <label for="start_date">Start Date:</label>
-        <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
-        <br>
-        <label for="stop_date">Stop Date:</label>
-        <input type="date" id="stop_date" name="stop_date" value="{{ stop_date }}">
-        <br>
-        {% endif %}
-        {% if mode == "player" %}
-        <label for="player_name">Enter Player Name:</label>
-        <input type="text" id="player_name" name="player_name" value="{{ player_name }}" autofocus requireds>
-        {% endif %}
-        {% if mode != "comparison" %}
-        <button type="submit">Show Stats</button>
-        {% endif %}
     </form>
 
     {% if mode == 'comparison' %}
@@ -97,7 +81,7 @@
             <input type="text" id="new_player" placeholder="Enter player name" autofocus>
             <button type="button" onclick="addPlayer()">Add Player</button>
         </div>
-        <textarea id="players_area" name="players" rows="5" cols="30" placeholder="Added players will appear here" required>{{ players | join('\n') }}</textarea><br>
+        <textarea id="players_area" name="players" rows="5" cols="30" placeholder="Added players will appear here" required>{{ players|join('\n') }}</textarea><br>
         <label for="start_date">Start Date:</label>
         <input type="date" name="start_date" value="{{ start_date }}"><br>
         <label for="stop_date">End Date:</label>
@@ -137,9 +121,9 @@
                 {% endfor %}
             </tr>
             <tr>
-                <td>Games Played</td>
+                <td>Played Games</td>
                 {% for stats in stats_list %}
-                <td class="stat positive">{{ stats.real_number_of_games }}</td>
+                <td class="stat positive">{{ stats.played_games }}</td>
                 {% endfor %}
             </tr>
             <tr>
@@ -238,6 +222,16 @@
 
     <!-- Tournament Statistics -->
     {% if mode == "tournament" %}
+    <form method="POST">
+        <input type="hidden" name="mode" value="tournament">
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
+        <br>
+        <label for="stop_date">Stop Date:</label>
+        <input type="date" id="stop_date" name="stop_date" value="{{ stop_date }}">
+        <br>
+        <button type="submit">Show Stats</button>
+    </form>
         <h2>Tournament Statistics</h2>
         <img src="{{ url_for('static', filename='pictures/num_of_players.png') }}" alt="Number of Players">
         <img src="{{ url_for('static', filename='pictures/winner_score.png') }}" alt="Winner Score">
@@ -260,17 +254,28 @@
     {% endif %}
 
     <!-- Player Statistics -->
-    {% if mode == "player" and stats %}
-        <h2>Performance Summary for {{ player_name }}</h2>
-
+    {% if mode == "player" %}
+    <form method="POST">
+        <input type="hidden" name="mode" value="player">
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
+        <br>
+        <label for="stop_date">Stop Date:</label>
+        <input type="date" id="stop_date" name="stop_date" value="{{ stop_date }}">
+        <br>
+        <label for="player_name">Enter Player Name:</label>
+        <input type="text" id="player_name" name="player_name" value="{{ player_name }}" autofocus requireds>
+        <button type="submit">Show Stats</button>
+    </form>
+    <h2>Performance Summary for {{ player_name }}</h2>
         <div class="table-container">
             <table>
-                <tr><th>Statistic</th><th>{{ player_name }}</th></tr>
+                <tr><th>Statistic</th><th>Value</th></tr>
                 <tr><td>Number of Tournaments</td><td>{{ stats.tournaments_count }}</td></tr>
                 <tr><td>First Tournament</td><td>{{ stats.first_tournament }}</td></tr>
                 <tr><td>Last Tournament</td><td>{{ stats.last_tournament }}</td></tr>
-                <tr><td>Total Possible Games</td><td>{{ stats.max_possible_games }}</td></tr>
-                <tr><td>Games Played</td><td>{{ stats.real_number_of_games }}</td></tr>
+                <tr><td>Max Possible Games</td><td>{{ stats.max_possible_games }}</td></tr>
+                <tr><td>Played Games</td><td>{{ stats.played_games }}</td></tr>
                 <tr><td>Skipped Games</td><td>{{ stats.skipped_games }}</td></tr>
                 <tr><td>Wins</td><td>{{ stats.wins }}</td></tr>
                 <tr><td>Draws</td><td>{{ stats.draws }}</td></tr>
@@ -286,6 +291,66 @@
                 <tr><td>Top 100 Finishes</td><td>{{ stats.top100 }}</td></tr>
                 <tr><td>Mean Place</td><td>{{ stats.mean_place|round(2) }}</td></tr>
                 <tr><td>Median Place</td><td>{{ stats.median_place }}</td></tr>
+            </table>
+        </div>
+
+        <h3>Perfomance of {{ player_name }} by rounds</h3>
+        <div class="table-container">
+            <table>
+                <tr>
+                    <th>Statistic / Round</th>
+                    {% for round_num in range(1, 12) %}
+                    <th>{{ round_num }}</th>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Played Games</td>
+                    {% for round in rounds_stats %}
+                    <td>{{ round.played_games }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Skipped Games</td>
+                    {% for round in rounds_stats %}
+                    <td>{{ round.skipped_games }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Wins</td>
+                    {% for round in rounds_stats %}
+                    <td>{{ round.wins }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Draws</td>
+                    {% for round in rounds_stats %}
+                    <td>{{ round.draws }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Losses</td>
+                    {% for round in rounds_stats %}
+                    <td>{{ round.losses }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Win Percentage</td>
+                    {% for round in rounds_stats %}
+                    <td>{{ round.percent_of_wins|round(2) }}%</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Draw Percentage</td>
+                    {% for round in rounds_stats %}
+                    <td>{{ round.percent_of_draws|round(2) }}%</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Loss Percentage</td>
+                    {% for round in rounds_stats %}
+                    <td>{{ round.percent_of_losses|round(2) }}%</td>
+                    {% endfor %}
+                </tr>
             </table>
         </div>
 
