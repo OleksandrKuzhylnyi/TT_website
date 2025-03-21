@@ -47,10 +47,10 @@ def get_data():
         raw.insert(0, "time", file[0])
         raw.insert(0, "tournament", file[:12])
         df = pd.concat([df, raw], ignore_index=True)
+    df.drop(columns=["Fed"], inplace=True)  # Doesn't represent player's federation correctly
     df.rename(columns={
     "Number": "place",
     "Rk": "starting_rank",
-    "Fed": "federation",
     "Title": "title",
     "Username": "username",
     "Name": "real_name",

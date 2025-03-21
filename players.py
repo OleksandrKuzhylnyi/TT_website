@@ -159,3 +159,72 @@ def analyze_perfomance_by_rounds(df, player="Hikaru Nakamura") -> dict:
     ]
 
     return results
+
+
+def get_opponents_in_tournament(df, place: int) -> dict:
+    """
+    Returns dict of reaults against opponents of player by place in specific tournament.
+    """
+    row = df[df["place"] == place].iloc[0]
+    rounds = [f"round_{i}" for i in range(1, 12)]
+    results = [row[round] for round in rounds if row[round] != "U--"]
+    wins_places = []
+    draws_places = []
+    losses_places = []
+    for result in results:
+        outcome = result[0]
+        place = int(result[1:-1])
+        if outcome == "W":
+            wins_places.append(place)
+        elif outcome == "D":
+            draws_places.append(place)
+        elif outcome == "L":
+            losses_places.append(place)
+
+    wins = None
+    draws = None
+    losses = None
+
+    if wins_places:
+      wins = df[df['place'].isin(wins_places)]['real_name'].iloc[0]
+    if draws_places:
+      draws = df[df['place'].isin(draws_places)]['real_name'].iloc[0]
+    if losses_places:
+      losses = df[df['place'].isin(losses_places)]['real_name'].iloc[0]
+
+    return {
+        "wins" : wins,
+        "draws" : draws,
+        "losses" : losses
+    }
+
+
+def get_opponents(df, player="Hikaru Nakamura") -> dict:
+    """
+    Returns dict of results against all opponents of the player.
+    """
+    dfs_by_tournament = {}
+    grouped = df.groupby('tournament')
+    for tournament, group_df in grouped:
+        dfs_by_tournament[tournament] = group_df
+
+    places = []
+    for tournament in dfs_by_tournament.values():
+        if player in tournament["real_name"].values:
+            places.append(tournament[tournament["real_name"] == player]["place"].iloc[0])
+        else:
+            places.append(None)
+
+    opponents = {
+        "wins" : [],
+        "draws" : [],
+        "losses" : []
+    }
+    for tournament, place in zip(dfs_by_tournament.values(), places):
+        if place:
+            tournament_opponents = get_opponents_in_tournament(tournament, place)
+            for result in opponents:
+                if tournament_opponents[result]:
+                  opponents[result].append(tournament_opponents[result])
+
+    return opponents
