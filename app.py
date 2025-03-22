@@ -7,7 +7,8 @@ from tournaments import (
     winners_by_rating, players_by_participation, top_3_finishers
 )
 from players import (
-    plot_player_ranking, analyze_player_performance, analyze_performance_by_rounds
+    plot_player_ranking, analyze_player_performance,
+    analyze_performance_by_rounds, analyze_opponents
 )
 from general import slice_by_date
 
@@ -63,6 +64,7 @@ def player():
 
     stats = analyze_player_performance(df, player_name)
     rounds_stats = analyze_performance_by_rounds(df, player_name)
+    opponents = analyze_opponents(df, player_name)
     plot_player_ranking(df, player_name)
 
     return render_template(
@@ -72,7 +74,8 @@ def player():
         stop_date=stop_date,
         player_name=player_name,
         stats=stats,
-        rounds_stats=rounds_stats
+        rounds_stats=rounds_stats,
+        opponents=opponents,
     )
 
 

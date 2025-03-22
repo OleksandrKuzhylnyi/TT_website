@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from collections import Counter
 
 def get_color(rank):
     if rank == 1:
@@ -163,11 +164,11 @@ def analyze_performance_by_rounds(df, player="Hikaru Nakamura") -> dict:
 
 def get_opponents_in_tournament(df, place: int) -> dict:
     """
-    Returns dict of reaults against opponents of player by place in specific tournament.
+    Returns dict of results against opponents of player by place in specific tournament.
     """
     row = df[df["place"] == place].iloc[0]
     rounds = [f"round_{i}" for i in range(1, 12)]
-    results = [row[round] for round in rounds if row[round] != "U--"]
+    results = [row[round] for round in rounds if row[round] != "U--" and row[round] != "BYE"]
     wins_places = []
     draws_places = []
     losses_places = []
@@ -186,11 +187,11 @@ def get_opponents_in_tournament(df, place: int) -> dict:
     losses = None
 
     if wins_places:
-      wins = df[df['place'].isin(wins_places)]['real_name'].iloc[0]
+      wins = list(df[df['place'].isin(wins_places)]['real_name'])
     if draws_places:
-      draws = df[df['place'].isin(draws_places)]['real_name'].iloc[0]
+      draws = list(df[df['place'].isin(draws_places)]['real_name'])
     if losses_places:
-      losses = df[df['place'].isin(losses_places)]['real_name'].iloc[0]
+      losses = list(df[df['place'].isin(losses_places)]['real_name'])
 
     return {
         "wins" : wins,
@@ -225,6 +226,20 @@ def get_opponents(df, player="Hikaru Nakamura") -> dict:
             tournament_opponents = get_opponents_in_tournament(tournament, place)
             for result in opponents:
                 if tournament_opponents[result]:
-                  opponents[result].append(tournament_opponents[result])
+                  opponents[result].extend(tournament_opponents[result])
+
+    for result in opponents:
+        # Some players didn't enter their name.
+        opponents[result] = [player for player in opponents[result] if isinstance(player, str)]
 
     return opponents
+
+
+def analyze_opponents(df, player="Hikaru Nakamura"):
+    opponents = get_opponents(df, player)
+
+    most_wins = Counter(opponents["wins"]).most_common(5)
+    most_draws = Counter(opponents["draws"]).most_common(5)
+    most_losses = Counter(opponents["losses"]).most_common(5)
+
+    return most_wins, most_draws, most_losses

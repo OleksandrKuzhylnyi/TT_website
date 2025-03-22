@@ -105,6 +105,52 @@
             </table>
         </div>
 
+        <h3>Most Wins Against</h3>
+        <div class="table-container">
+            <table>
+                <tr>
+                    <th>Player</th>
+                    <th>Wins</th>
+                </tr>
+                {% for player, wins in opponents[0] %}
+                    <tr>
+                        <td>{{ player }}</td><td>{{ wins }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <h3>Most Draws Against</h3>
+        <div class="table-container">
+            <table>
+                <tr>
+                    <th>Player</th>
+                    <th>Draws</th>
+                </tr>
+                {% for player, draws in opponents[1] %}
+                    <tr>
+                        <td>{{ player }}</td><td>{{ draws }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+            <h3>Most Losses Against</h3>
+            <div class="table-container">
+                <table>
+                    <tr>
+                        <th>Player</th>
+                        <th>Losses</th>
+                    </tr>
+                    {% for player, losses in opponents[2] %}
+                        <tr>
+                            <td>{{ player }}</td><td>{{ losses }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+
         <img src="{{ url_for('static', filename='pictures/' + player_name.replace(' ', '_') + '_ranking.png') }}"
          alt="Player Ranking" width="1200" height="900">
 

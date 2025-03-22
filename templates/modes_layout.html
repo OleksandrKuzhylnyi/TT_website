@@ -11,7 +11,7 @@
     <body>
         <div class="nav-bar">
             <a href="{{ url_for('tournaments', start=start_date, stop=stop_date) }}" class="nav-link">Tournaments</a>
-            <a href="{{ url_for('player', start=start_date, stop=stop_date) }}" class="nav-link">Player</a>
+            <a href="{{ url_for('player', player_name=player_name, start=start_date, stop=stop_date) }}" class="nav-link">Player</a>
             <a href="{{ url_for('comparison', start=start_date, stop=stop_date) }}" class="nav-link">Comparison</a>
         </div>
 
