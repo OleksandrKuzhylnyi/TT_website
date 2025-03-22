@@ -34,3 +34,13 @@ h1 {
     background-color: #f8d7da;
     color: #721c24;
   }
+
+.nav-bar {
+    position: sticky;
+    top: 0;
+    background: white;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.nav-link { margin: 0 10px; }

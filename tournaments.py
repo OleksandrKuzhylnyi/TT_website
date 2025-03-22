@@ -5,7 +5,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 
-def plot_num_of_players(df):
+def num_of_players(df):
     early = df[df["time"] == "E"]
     late = df[df["time"] == "L"]
 
@@ -108,7 +108,7 @@ def skips_per_round(df):
     plt.close()
 
 
-def bar_of_winners_by_starting_rank(df):
+def winners_by_starting_rank(df):
     starting_rankings = df[df["place"] == 1]["starting_rank"]
     bins = [0, 1, 2, 3, 5, 10, 20, float("inf")]
     labels = ["1", "2", "3", "4-5", "6-10", "11-20", "20+"]

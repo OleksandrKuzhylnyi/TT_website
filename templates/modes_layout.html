@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Titled Tuesday Stats</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <script src="{{ url_for('static', filename='comparison.js') }}"></script>
+    </head>
+
+    <body>
+        <div class="nav-bar">
+            <a href="{{ url_for('tournaments', start=start_date, stop=stop_date) }}" class="nav-link">Tournaments</a>
+            <a href="{{ url_for('player', start=start_date, stop=stop_date) }}" class="nav-link">Player</a>
+            <a href="{{ url_for('comparison', start=start_date, stop=stop_date) }}" class="nav-link">Comparison</a>
+        </div>
+
+        <form id="date-form" method="POST" action="{{ url_for(current_route) }}">
+            <label for="start_date">Start Date:</label>
+            <input type="date" name="start_date" value="{{ start_date }}" onchange="this.form.submit()"><br>
+            <label for="stop_date">End Date:</label>
+            <input type="date" name="stop_date" value="{{ stop_date }}" onchange="this.form.submit()"><br>
+        </form>
+
+        {% block content %}{% endblock %}
+    </body>
+
+</html>

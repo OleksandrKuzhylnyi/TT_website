@@ -123,7 +123,7 @@ def analyze_player_performance(df, player="Hikaru Nakamura") -> dict:
     return results
 
 
-def analyze_perfomance_by_rounds(df, player="Hikaru Nakamura") -> dict:
+def analyze_performance_by_rounds(df, player="Hikaru Nakamura") -> dict:
     """
     Analyzes the performance of a specific player by rounds.
     """

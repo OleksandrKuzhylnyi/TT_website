@@ -66,6 +66,7 @@ def get_data():
     **{f"RND{i}": f"round_{i}" for i in range(1, 12)}  # Rename RND1-RND11 dynamically
     }, inplace=True)
     df["date"] = pd.to_datetime(df["date"], format="%d.%m.%y")
+    df.sort_values(["date", "time"], inplace=True)
     df.to_csv("static/data.csv", index=False)
 
 if __name__ == "__main__":
