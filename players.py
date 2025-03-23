@@ -43,7 +43,7 @@ def plot_player_ranking(df, player="Hikaru Nakamura"):
     dates = sorted(df_player["date"].unique())
     plt.xticks(dates[::2], rotation=45)
     plt.title(f"Rankings of {player}")
-    plt.ylabel("Ranking")
+    plt.ylabel("Ranking (Log Scale)")
     plt.yscale("log")
     plt.yticks([1, 2, 3, 5, 10, 20, 50, 100, 200, 300, 400, 500], [1, 2, 3, 5, 10, 20, 50, 100, 200, 300, 400, 500])
 

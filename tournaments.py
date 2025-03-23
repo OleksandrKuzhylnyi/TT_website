@@ -150,14 +150,15 @@ def players_by_participation(df, limit=100):
 
 
 def top_3_finishers(df):
-    first = df[df["place"] == 1]["real_name"].value_counts()
-    second = df[df["place"] == 2]["real_name"].value_counts()
-    third = df[df["place"] == 3]["real_name"].value_counts()
-    winners = pd.merge(first, second, how='outer', on="real_name", suffixes=('_1', '_2'))
+    first = df[df["place"] == 1]["real_name"].value_counts().reset_index()
+    first.columns = ['real_name', '1']
+    second = df[df["place"] == 2]["real_name"].value_counts().reset_index()
+    second.columns = ['real_name', '2']
+    third = df[df["place"] == 3]["real_name"].value_counts().reset_index()
+    third.columns = ['real_name', '3']
+    winners = pd.merge(first, second, how='outer', on="real_name")
     winners = pd.merge(winners, third, how='outer', on="real_name")
     winners.fillna(0, inplace=True)
-    winners.reset_index(inplace=True)
-    winners.rename(columns={"count_1" : '1', "count_2" : '2', "count" : '3'}, inplace=True)
     winners.sort_values(by=["1", "2", "3"], inplace=True)
     
     # Sums gold, silver, and bronze medals of the top player

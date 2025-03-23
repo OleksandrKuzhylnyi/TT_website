@@ -25,6 +25,12 @@ h1 {
     text-align: center;
 }
 
+.tables-container {
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+}
+
 .green {
     background-color: #d4edda;
     color: #155724;

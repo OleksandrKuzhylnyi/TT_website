@@ -16,6 +16,7 @@
         </div>
 
         <form id="date-form" method="POST" action="{{ url_for(current_route) }}">
+            <input type="hidden" name="player_name" value="{{ player_name }}">
             <label for="start_date">Start Date:</label>
             <input type="date" name="start_date" value="{{ start_date }}" onchange="this.form.submit()"><br>
             <label for="stop_date">End Date:</label>
