@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine
 import pandas as pd
 from tournaments import (
     num_of_players, average_score_of_winner, average_score_of_top_10,
