@@ -24,7 +24,7 @@ def num_of_players(df):
     plt.grid(True, linestyle='--', linewidth=0.5, alpha=0.7)
     plt.tight_layout()
     plt.gca().set_facecolor('#f9f9f9')
-    plt.savefig("static/pictures/num_of_players.png")
+    plt.savefig("static/images/num_of_players.png")
     plt.close()
 
 def average_score_of_winner(df):
@@ -44,7 +44,7 @@ def average_score_of_winner(df):
     plt.grid(True, linestyle='--', linewidth=0.5, alpha=0.7)
     plt.tight_layout()
     plt.gca().set_facecolor('#f9f9f9')
-    plt.savefig("static/pictures/winner_score.png")
+    plt.savefig("static/images/winner_score.png")
     plt.close()
 
 def average_score_of_top_10(df):
@@ -66,7 +66,7 @@ def average_score_of_top_10(df):
     plt.grid(True, linestyle='--', linewidth=0.5, alpha=0.7)
     plt.tight_layout()
     plt.gca().set_facecolor('#f9f9f9')
-    plt.savefig("static/pictures/top_10_score.png")
+    plt.savefig("static/images/top_10_score.png")
     plt.close()
 
 def average_rating_of_top_10(df):
@@ -88,7 +88,7 @@ def average_rating_of_top_10(df):
     plt.grid(True, linestyle='--', linewidth=0.5, alpha=0.7)
     plt.gca().set_facecolor('#f9f9f9')
     plt.tight_layout()
-    plt.savefig("static/pictures/top_10_rating.png")
+    plt.savefig("static/images/top_10_rating.png")
     plt.close()
 
 def skips_per_round(df):
@@ -104,7 +104,7 @@ def skips_per_round(df):
     plt.yticks([])
     plt.gca().set_facecolor('#f9f9f9')
     plt.tight_layout()
-    plt.savefig("static/pictures/skips_per_round.png")
+    plt.savefig("static/images/skips_per_round.png")
     plt.close()
 
 
@@ -125,7 +125,7 @@ def winners_by_starting_rank(df):
     for i, (percent, value) in enumerate(zip(category_percents, category_counts)):
         plt.text(i, percent + 0.2, f"{int(value)} wins", ha="center", fontsize=10)
     plt.tight_layout()
-    plt.savefig("static/pictures/winners_by_starting_rank.png")
+    plt.savefig("static/images/winners_by_starting_rank.png")
     plt.close()
 
 
@@ -140,7 +140,7 @@ def winners_by_rating(df):
     plt.gca().set_facecolor('#f9f9f9')
     plt.grid(axis='y', linestyle='--', alpha=0.7)
     plt.tight_layout()
-    plt.savefig("static/pictures/winners_by_rating.png")
+    plt.savefig("static/images/winners_by_rating.png")
     plt.close()
     
 
@@ -173,5 +173,5 @@ def top_3_finishers(df):
     plt.grid(axis='x', linestyle='--', color='royalblue', alpha=0.7)
     plt.gca().set_facecolor('#f9f9f9')
     plt.tight_layout()
-    plt.savefig("static/pictures/top_3_finishers.png")
+    plt.savefig("static/images/top_3_finishers.png")
     plt.close()

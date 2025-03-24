@@ -6,6 +6,8 @@
 
     <h1>Comparison of Players</h1>
     <form method="POST">
+        <input type="hidden" name="start_date" value="{{ start_date }}">
+        <input type="hidden" name="stop_date" value="{{ stop_date }}">
         <div class="player-input-container">
             <input type="text" id="new_player" placeholder="Enter player name" autofocus>
             <button type="button" onclick="addPlayer()">Add Player</button>

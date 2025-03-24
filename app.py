@@ -60,7 +60,8 @@ def player():
 
     df = slice_by_date(DATA, start_date, stop_date)
 
-    player_name = request.form.get("player_name", "Hikaru Nakamura")
+    player_name = request.form.get("player_name", "Hikaru Nakamura").strip()
+    
 
     stats = analyze_player_performance(df, player_name)
     rounds_stats = analyze_performance_by_rounds(df, player_name)

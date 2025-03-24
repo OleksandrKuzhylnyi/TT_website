@@ -65,7 +65,7 @@ def plot_player_ranking(df, player="Hikaru Nakamura"):
 
     plt.legend(handles=handles, title="Ranking", loc="best")
     plt.tight_layout()
-    plt.savefig(f"static/pictures/{player.replace(' ', '_')}_ranking.png")
+    plt.savefig(f"static/images/{player.replace(' ', '_')}_ranking.png")
     plt.close()
 
 def analyze_player_performance(df, player="Hikaru Nakamura") -> dict:
