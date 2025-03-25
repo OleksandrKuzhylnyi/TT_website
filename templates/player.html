@@ -1,4 +1,4 @@
-{% extends "modes_layout.html" %}
+{% extends "layout.html" %}
 
 {% block content %}
 
@@ -115,7 +115,7 @@
                             <th>Player</th>
                             <th>Wins</th>
                         </tr>
-                        {% for player, wins in opponents[0] %}
+                        {% for player, wins in opponents.wins %}
                             <tr>
                                 <td>{{ player }}</td><td>{{ wins }}</td>
                             </tr>
@@ -132,7 +132,7 @@
                             <th>Player</th>
                             <th>Draws</th>
                         </tr>
-                        {% for player, draws in opponents[1] %}
+                        {% for player, draws in opponents.draws %}
                             <tr>
                                 <td>{{ player }}</td><td>{{ draws }}</td>
                             </tr>
@@ -149,7 +149,7 @@
                             <th>Player</th>
                             <th>Losses</th>
                         </tr>
-                        {% for player, losses in opponents[2] %}
+                        {% for player, losses in opponents.losses %}
                             <tr>
                                 <td>{{ player }}</td><td>{{ losses }}</td>
                             </tr>

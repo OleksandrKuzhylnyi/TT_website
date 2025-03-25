@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for
-from sqlalchemy import create_engine
+from itertools import combinations
 import pandas as pd
+from sqlalchemy import create_engine
+
 from tournaments import (
     num_of_players, average_score_of_winner, average_score_of_top_10,
     average_rating_of_top_10, skips_per_round, winners_by_starting_rank,
@@ -8,7 +10,7 @@ from tournaments import (
 )
 from players import (
     plot_player_ranking, analyze_player_performance,
-    analyze_performance_by_rounds, analyze_opponents
+    analyze_performance_by_rounds, analyze_opponents, head_to_head
 )
 from general import slice_by_date
 
@@ -95,13 +97,16 @@ def comparison():
     for player in players:
         stats_list.append(analyze_player_performance(df, player))
 
+    results = head_to_head(df, players)
+
     return render_template(
         "comparison.html",
         current_route="comparison",
         start_date=start_date,
         stop_date=stop_date,
         players=players,
-        stats_list=stats_list
+        stats_list=stats_list,
+        results=results,
     )
 
 

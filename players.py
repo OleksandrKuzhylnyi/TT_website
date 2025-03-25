@@ -1,9 +1,30 @@
+from collections import Counter, defaultdict
+from dataclasses import dataclass
+from itertools import combinations
 import pandas as pd
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from collections import Counter
+
+
+@dataclass
+class Results:
+    wins: int = 0
+    draws: int = 0
+    losses: int = 0
+
+    def __add__(self, other):
+        if not isinstance(other, Results):
+            raise TypeError
+        return Results(
+            self.wins + other.wins,
+            self.draws + other.draws,
+            self.losses + other.losses
+        )
+    
+    def __invert__(self):
+        return(Results(wins=self.losses, draws=self.draws, losses=self.wins))
 
 def get_color(rank):
     if rank == 1:
@@ -237,9 +258,24 @@ def get_opponents(df, player="Hikaru Nakamura") -> dict:
 
 def analyze_opponents(df, player="Hikaru Nakamura"):
     opponents = get_opponents(df, player)
+    wins = Counter(opponents["wins"]).most_common(5)
+    draws = Counter(opponents["draws"]).most_common(5)
+    losses = Counter(opponents["losses"]).most_common(5)
 
-    most_wins = Counter(opponents["wins"]).most_common(5)
-    most_draws = Counter(opponents["draws"]).most_common(5)
-    most_losses = Counter(opponents["losses"]).most_common(5)
+    return Results(wins, draws, losses)
 
-    return most_wins, most_draws, most_losses
+
+def head_to_head(df, players):
+    results = defaultdict(lambda: Results())
+        
+    for player, opponent in combinations(players, 2):
+        opponents = get_opponents(df, player)
+        wins = opponents["wins"].count(opponent)
+        draws = opponents["draws"].count(opponent)
+        losses = opponents["losses"].count(opponent)
+        results[(player, opponent)] = Results(wins, draws, losses)
+
+        results[(player, "Others")] += Results(wins, draws, losses)
+        results[(opponent, "Others")] += ~Results(wins, draws, losses) # Wins and losses are switched.
+
+    return results

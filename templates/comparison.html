@@ -1,4 +1,4 @@
-{% extends "modes_layout.html" %}
+{% extends "layout.html" %}
 
 {% block content %}
 
@@ -152,5 +152,28 @@
             </tr>
         </table>
     </div>
+
+    <h2>Head-to-head Comparison</h2>
+    <div class="table-container">
+        <table>
+            <tr>
+                <th>Player 1</th>
+                <th>Player 2</th>
+                <th>Wins(P1)</th>
+                <th>Draws</th>
+                <th>Wins(P2)</th>
+            </tr>
+            {% for players, games in results.items() %}
+                <tr>
+                    <td>{{ players[0] }}</td>
+                    <td>{{ players[1] }}</td>
+                    <td>{{ games.wins }}</td>
+                    <td>{{ games.draws }}</td>
+                    <td>{{ games.losses }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
 
 {% endblock %}
