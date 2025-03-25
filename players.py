@@ -266,7 +266,8 @@ def analyze_opponents(df, player="Hikaru Nakamura"):
 
 
 def head_to_head(df, players):
-    results = defaultdict(lambda: Results())
+    results = {}
+    total = defaultdict(lambda: Results())
         
     for player, opponent in combinations(players, 2):
         opponents = get_opponents(df, player)
@@ -275,7 +276,8 @@ def head_to_head(df, players):
         losses = opponents["losses"].count(opponent)
         results[(player, opponent)] = Results(wins, draws, losses)
 
-        results[(player, "Others")] += Results(wins, draws, losses)
-        results[(opponent, "Others")] += ~Results(wins, draws, losses) # Wins and losses are switched.
+        total[(player, "Others")] += Results(wins, draws, losses)
+        total[(opponent, "Others")] += ~Results(wins, draws, losses) # Wins and losses are switched.
 
+    results.update(total)
     return results
