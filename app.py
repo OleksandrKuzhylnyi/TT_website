@@ -1,5 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
-from itertools import combinations
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 import pandas as pd
 from sqlalchemy import create_engine
 
@@ -23,7 +22,7 @@ with engine.connect() as conn:
 
 MIN_DATE = DATA["date"].min().strftime('%Y-%m-%d')
 MAX_DATE = DATA["date"].max().strftime('%Y-%m-%d')
-    
+PLAYER_NAMES = DATA.real_name.dropna().unique()
 
 @app.route("/")
 def index():
@@ -109,6 +108,13 @@ def comparison():
         results=results,
         total=total
     )
+
+
+@app.route('/autocomplete', methods=["GET"])
+def autocomplete():
+    query = request.args.get('query', '').lower()
+    suggestions = [name for name in PLAYER_NAMES if query in name.lower()]
+    return jsonify(suggestions[:10])
 
 
 if __name__ == "__main__":

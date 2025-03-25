@@ -50,3 +50,14 @@ h1 {
 }
 
 .nav-link { margin: 0 10px; }
+
+#player_name{margin: 10px;}
+
+#autocomplete-suggestions {
+    border: 1px solid #ccc;
+    background-color: white;
+}
+
+#autocomplete-suggestions div:hover {
+    background-color: #e0e0e0;
+}
