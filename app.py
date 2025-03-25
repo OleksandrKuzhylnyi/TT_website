@@ -97,7 +97,7 @@ def comparison():
     for player in players:
         stats_list.append(analyze_player_performance(df, player))
 
-    results = head_to_head(df, players)
+    results, total = head_to_head(df, players)
 
     return render_template(
         "comparison.html",
@@ -107,6 +107,7 @@ def comparison():
         players=players,
         stats_list=stats_list,
         results=results,
+        total=total
     )
 
 

@@ -276,8 +276,7 @@ def head_to_head(df, players):
         losses = opponents["losses"].count(opponent)
         results[(player, opponent)] = Results(wins, draws, losses)
 
-        total[(player, "Others")] += Results(wins, draws, losses)
-        total[(opponent, "Others")] += ~Results(wins, draws, losses) # Wins and losses are switched.
+        total[player] += Results(wins, draws, losses)
+        total[opponent] += ~Results(wins, draws, losses) # Wins and losses are switched.
 
-    results.update(total)
-    return results
+    return results, total

@@ -172,6 +172,17 @@
                     <td>{{ games.losses }}</td>
                 </tr>
             {% endfor %}
+            {% if results|length > 1 %}
+                {% for player, games in total.items() %}
+                    <tr>
+                        <td>{{ player }}</td>
+                        <td>Others</td>
+                        <td>{{ games.wins }}</td>
+                        <td>{{ games.draws }}</td>
+                        <td>{{ games.losses }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
         </table>
     </div>
 
