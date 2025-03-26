@@ -54,8 +54,17 @@ h1 {
 #player_name{margin: 10px;}
 
 #autocomplete-suggestions {
+    margin: auto;
+    width: 300px;
     border: 1px solid #ccc;
     background-color: white;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#autocomplete-suggestions.show {
+    opacity: 1;
+    transform: translateY(0); /* Move to final position */
 }
 
 #autocomplete-suggestions div:hover {

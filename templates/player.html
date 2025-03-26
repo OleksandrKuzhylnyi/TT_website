@@ -9,7 +9,7 @@
         <input type="hidden" name="start_date" value="{{ start_date }}">
         <input type="hidden" name="stop_date" value="{{ stop_date }}">
         <label for="player_name">Enter Player Name:</label>
-        <input type="text" id="player_name" name="player_name" value="{{ player_name }}" autofocus requireds>
+        <input type="text" id="player_name" name="player_name" value="{{ player_name }}" autocomplete="off" autofocus requireds>
         <div id="autocomplete-suggestions"></div> <!-- Placeholder for suggestions -->
         <button type="submit">Show Stats</button>
     </form>
