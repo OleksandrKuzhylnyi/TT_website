@@ -60,11 +60,14 @@ h1 {
     background-color: white;
     transform: translateY(-10px);
     transition: opacity 0.3s ease, transform 0.3s ease;
+    opacity: 0; /* Start invisible */
+    pointer-events: none; /* Disable interactions when hidden */
 }
 
 #autocomplete-suggestions.show {
     opacity: 1;
-    transform: translateY(0); /* Move to final position */
+    transform: translateY(0);
+    pointer-events: auto; /* Enable interactions when visible */
 }
 
 #autocomplete-suggestions div:hover {

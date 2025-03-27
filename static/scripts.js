@@ -51,18 +51,32 @@ document.addEventListener("DOMContentLoaded", function () {
         const inputField = document.getElementById('player_name');
         const suggestionsBox = document.getElementById('autocomplete-suggestions');
 
+        let debounceTimer;
+        let abortController = null;
+
         inputField.addEventListener('input', function () {
             const query = inputField.value.trim();
+
+            // Clear previous operations
+            clearTimeout(debounceTimer);
+            if (abortController) abortController.abort();
+            suggestionsBox.classList.remove('show'); // Hide immediately
+
             if (query.length === 0) {
-                suggestionsBox.innerHTML = ''; // Clear suggestions if input is empty
+                suggestionsBox.innerHTML = '';
                 return;
             }
 
-            // Fetch suggestions from the server
-            fetch(`/autocomplete?query=${encodeURIComponent(query)}`)
+            debounceTimer = setTimeout(() => {
+                abortController = new AbortController(); // Create a new abort controller
+
+                fetch(`/autocomplete?query=${encodeURIComponent(query)}`, {
+                    signal: abortController.signal // Link to abort controller
+                })
                 .then(response => response.json())
                 .then(data => {
                     suggestionsBox.innerHTML = ''; // Clear previous suggestions
+
                     if (data.length > 0) {
                         data.forEach(suggestion => {
                             const div = document.createElement('div');
@@ -73,26 +87,34 @@ document.addEventListener("DOMContentLoaded", function () {
                             div.style.margin = '2px 0';
 
                             // Handle suggestion selection
-                            div.addEventListener('click', function () {
+                            div.addEventListener('click', () => {
                                 inputField.value = suggestion; // Fill input with selected suggestion
                                 suggestionsBox.innerHTML = ''; // Clear suggestions
+                                suggestionsBox.classList.remove('show'); // Hide suggestions box
                             });
 
                             suggestionsBox.appendChild(div);
-                            suggestionsBox.classList.add('show');
                         });
                     } else {
                         suggestionsBox.innerHTML = '<div style="padding: 5px;">No matches found</div>';
-                        suggestionsBox.classList.add('show');
                     }
+
+                    // Show the suggestions box after content is ready
+                    suggestionsBox.classList.add('show');
                 })
-                .catch(error => console.error('Error fetching suggestions:', error));
+                .catch(error => {
+                    if (error.name !== 'AbortError') { // Ignore abort errors
+                        console.error('Error fetching suggestions:', error);
+                    }
+                });
+            }, 300);
         });
 
         // Hide suggestions when clicking outside
         document.addEventListener('click', function (event) {
             if (!suggestionsBox.contains(event.target) && event.target !== inputField) {
                 suggestionsBox.innerHTML = '';
+                suggestionsBox.classList.remove('show'); // Properly hide with transition
             }
         });
     });
