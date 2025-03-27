@@ -1,5 +1,5 @@
 function addPlayer() {
-    const playerInput = document.getElementById('new_player');
+    const playerInput = document.getElementById('player_name');
     const playersArea = document.getElementById('players_area');
     const player = playerInput.value.trim();
     
