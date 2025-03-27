@@ -109,6 +109,23 @@
 
         <div class="tables-container">
             <div>
+                <h3>Most Games Against</h3>
+                <div class="table-container">
+                    <table>
+                        <tr>
+                            <th>Player</th>
+                            <th>Games</th>
+                        </tr>
+                        {% for player, games in opponents.total %}
+                            <tr>
+                                <td>{{ player }}</td><td>{{ games }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+
+            <div>
                 <h3>Most Wins Against</h3>
                 <div class="table-container">
                     <table>

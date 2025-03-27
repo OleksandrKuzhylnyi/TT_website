@@ -25,6 +25,25 @@ class Results:
     
     def __invert__(self):
         return(Results(wins=self.losses, draws=self.draws, losses=self.wins))
+    
+
+@dataclass
+class Opponents:
+    wins: list
+    draws: list
+    losses: list
+    total: list
+
+    def __add__(self, other):
+        if not isinstance(other, Opponents):
+            raise TypeError
+        return Opponents(
+            self.wins + other.wins,
+            self.draws + other.draws,
+            self.losses + other.losses,
+            self.total + other.total
+        )
+
 
 def get_color(rank):
     if rank == 1:
@@ -261,8 +280,9 @@ def analyze_opponents(df, player="Hikaru Nakamura"):
     wins = Counter(opponents["wins"]).most_common(5)
     draws = Counter(opponents["draws"]).most_common(5)
     losses = Counter(opponents["losses"]).most_common(5)
+    total = Counter(opponents["wins"] + opponents["draws"] + opponents["losses"]).most_common(5)
 
-    return Results(wins, draws, losses)
+    return Opponents(wins, draws, losses, total)
 
 
 def head_to_head(df, players):
