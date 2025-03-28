@@ -9,6 +9,10 @@ h1 {
     color: #333;
 }
 
+button {
+    margin: 10px;
+}
+
 .table-container {
     display: flex;
     justify-content: center;
@@ -51,11 +55,15 @@ h1 {
 
 .nav-link { margin: 0 10px; }
 
-#player_name{margin: 10px;}
+#date-form {
+    margin: 10px;
+}
+
+#player_name {margin: 10px;}
 
 #autocomplete-suggestions {
     margin: auto;
-    width: 300px;
+    width: 250px;
     border: 1px solid #ccc;
     background-color: white;
     transform: translateY(-10px);
@@ -72,4 +80,40 @@ h1 {
 
 #autocomplete-suggestions div:hover {
     background-color: #e0e0e0;
+}
+
+#players-container {
+    margin: auto;
+    width: 250px;
+    min-height: 80px;
+    border: 1px solid #ccc;
+    padding: 8px;
+    border-radius: 4px;
+    background-color: white;
+}
+
+.player-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.player-item:last-child {
+    border-bottom: none;
+}
+
+.remove-player {
+    background: none;
+    border: none;
+    color: #ff4444;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 0 4px;
+    display: none; /* Hide by default */
+}
+
+.player-item:hover .remove-player {
+    display: block; /* Show on hover */
 }

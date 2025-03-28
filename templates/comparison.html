@@ -9,11 +9,16 @@
         <input type="hidden" name="start_date" value="{{ start_date }}">
         <input type="hidden" name="stop_date" value="{{ stop_date }}">
         <div class="player-input-container">
-            <input type="text" id="player_name" placeholder="Enter player name" autofocus>
+            <input type="text" id="player_name" placeholder="Enter player name" autocomplete="off" autofocus>
             <button type="button" onclick="addPlayer()">Add Player</button>
         </div>
         <div id="autocomplete-suggestions"></div> <!-- Placeholder for suggestions -->
-        <textarea id="players_area" name="players" rows="5" cols="30" placeholder="Added players will appear here" required>{{ players|join('\n') }}</textarea><br>
+        <div id="players-container"></div>
+        <textarea id="players_area" name="players" style="display: none;">
+            {% if players %}
+                {{ players|join('\n') }}
+            {% endif %}
+        </textarea>
         <button type="submit">Compare Players</button>
     </form>
 

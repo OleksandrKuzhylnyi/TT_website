@@ -22,7 +22,7 @@ with engine.connect() as conn:
 
 MIN_DATE = DATA["date"].min().strftime('%Y-%m-%d')
 MAX_DATE = DATA["date"].max().strftime('%Y-%m-%d')
-PLAYER_NAMES = DATA.real_name.dropna().unique()
+PLAYER_NAMES = DATA.sort_values(["rating"], ascending=False).real_name.dropna().unique()
 
 @app.route("/")
 def index():
