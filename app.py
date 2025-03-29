@@ -66,7 +66,7 @@ def player():
 
     stats = analyze_player_performance(df, player_name)
     rounds_stats = analyze_performance_by_rounds(df, player_name)
-    opponents = analyze_opponents(df, player_name)
+    white_opponents, black_opponents, opponents = analyze_opponents(df, player_name)
     plot_player_ranking(df, player_name)
 
     return render_template(
@@ -77,6 +77,8 @@ def player():
         player_name=player_name,
         stats=stats,
         rounds_stats=rounds_stats,
+        white_opponents=white_opponents,
+        black_opponents=black_opponents,
         opponents=opponents,
     )
 
@@ -96,7 +98,7 @@ def comparison():
     for player in players:
         stats_list.append(analyze_player_performance(df, player))
 
-    results, total = head_to_head(df, players)
+    white_results, black_results, results, white_total, black_total, total = head_to_head(df, players)
 
     return render_template(
         "comparison.html",
@@ -105,8 +107,12 @@ def comparison():
         stop_date=stop_date,
         players=players,
         stats_list=stats_list,
+        white_results=white_results,
+        black_results=black_results,
         results=results,
-        total=total
+        white_total=white_total,
+        black_total=black_total,
+        total=total,
     )
 
 

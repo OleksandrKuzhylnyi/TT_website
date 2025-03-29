@@ -177,6 +177,150 @@
             </div>
         </div>
 
+        <h2>Statistics by Color</h2>
+        <h3>White</h3>
+        <div class="tables-container">
+            <div>
+                <h3>Most Games Against</h3>
+                <div class="table-container">
+                    <table>
+                        <tr>
+                            <th>Player</th>
+                            <th>Games</th>
+                        </tr>
+                        {% for player, games in white_opponents.total %}
+                            <tr>
+                                <td>{{ player }}</td><td>{{ games }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+
+            <div>
+                <h3>Most Wins Against</h3>
+                <div class="table-container">
+                    <table>
+                        <tr>
+                            <th>Player</th>
+                            <th>Wins</th>
+                        </tr>
+                        {% for player, wins in white_opponents.wins %}
+                            <tr>
+                                <td>{{ player }}</td><td>{{ wins }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+
+            <div>
+                <h3>Most Draws Against</h3>
+                <div class="table-container">
+                    <table>
+                        <tr>
+                            <th>Player</th>
+                            <th>Draws</th>
+                        </tr>
+                        {% for player, draws in white_opponents.draws %}
+                            <tr>
+                                <td>{{ player }}</td><td>{{ draws }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+
+            <div>
+                <h3>Most Losses Against</h3>
+                <div class="table-container">
+                    <table>
+                        <tr>
+                            <th>Player</th>
+                            <th>Losses</th>
+                        </tr>
+                        {% for player, losses in white_opponents.losses %}
+                            <tr>
+                                <td>{{ player }}</td><td>{{ losses }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <h3>Black</h3>
+        <div class="tables-container">
+            <div>
+                <h3>Most Games Against</h3>
+                <div class="table-container">
+                    <table>
+                        <tr>
+                            <th>Player</th>
+                            <th>Games</th>
+                        </tr>
+                        {% for player, games in black_opponents.total %}
+                            <tr>
+                                <td>{{ player }}</td><td>{{ games }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+
+            <div>
+                <h3>Most Wins Against</h3>
+                <div class="table-container">
+                    <table>
+                        <tr>
+                            <th>Player</th>
+                            <th>Wins</th>
+                        </tr>
+                        {% for player, wins in black_opponents.wins %}
+                            <tr>
+                                <td>{{ player }}</td><td>{{ wins }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+
+            <div>
+                <h3>Most Draws Against</h3>
+                <div class="table-container">
+                    <table>
+                        <tr>
+                            <th>Player</th>
+                            <th>Draws</th>
+                        </tr>
+                        {% for player, draws in black_opponents.draws %}
+                            <tr>
+                                <td>{{ player }}</td><td>{{ draws }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+
+            <div>
+                <h3>Most Losses Against</h3>
+                <div class="table-container">
+                    <table>
+                        <tr>
+                            <th>Player</th>
+                            <th>Losses</th>
+                        </tr>
+                        {% for player, losses in black_opponents.losses %}
+                            <tr>
+                                <td>{{ player }}</td><td>{{ losses }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
         <img src="{{ url_for('static', filename='images/' + player_name.replace(' ', '_') + '_ranking.png') }}"
          alt="Player Ranking" width="1200" height="900">
 

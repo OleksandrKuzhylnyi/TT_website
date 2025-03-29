@@ -1,11 +1,11 @@
-from collections import Counter, defaultdict
-from dataclasses import dataclass
+from collections import Counter, defaultdict, namedtuple
+from dataclasses import dataclass, field, fields
 from itertools import combinations
-import pandas as pd
-import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import pandas as pd
+from typing import List
 
 
 @dataclass
@@ -29,10 +29,10 @@ class Results:
 
 @dataclass
 class Opponents:
-    wins: list
-    draws: list
-    losses: list
-    total: list
+    wins: List[str] = field(default_factory=list)
+    draws: List[str] = field(default_factory=list)
+    losses: List[str] = field(default_factory=list)
+    total: List[str] = field(default_factory=list)
 
     def __add__(self, other):
         if not isinstance(other, Opponents):
@@ -202,101 +202,136 @@ def analyze_performance_by_rounds(df, player="Hikaru Nakamura") -> dict:
     return results
 
 
-def get_opponents_in_tournament(df, place: int) -> dict:
+def get_opponents_in_tournament(df: pd.DataFrame, place: int) -> Opponents:
     """
-    Returns dict of results against opponents of player by place in specific tournament.
+    Returns results against opponents of player by place in specific tournament.
     """
     row = df[df["place"] == place].iloc[0]
     rounds = [f"round_{i}" for i in range(1, 12)]
-    results = [row[round] for round in rounds if row[round] != "U--" and row[round] != "BYE"]
-    wins_places = []
-    draws_places = []
-    losses_places = []
-    for result in results:
-        outcome = result[0]
-        place = int(result[1:-1])
+
+    white_games = [row[rnd] for rnd in rounds if row[rnd][-1] == "W"]
+    black_games = [row[rnd] for rnd in rounds if row[rnd][-1] == "B"]
+    
+    white_places = Opponents()
+    for game in white_games:
+        outcome = game[0]
+        opponent_place = int(game[1:-1])
         if outcome == "W":
-            wins_places.append(place)
+            white_places.wins.append(opponent_place)
         elif outcome == "D":
-            draws_places.append(place)
-        elif outcome == "L":
-            losses_places.append(place)
+            white_places.draws.append(opponent_place)
+        else: # outcome == "L"
+            white_places.losses.append(opponent_place)
 
-    wins = None
-    draws = None
-    losses = None
+    black_places = Opponents()
+    for game in black_games:
+        outcome = game[0]
+        opponent_place = int(game[1:-1])
+        if outcome == "W":
+            black_places.wins.append(opponent_place)
+        elif outcome == "D":
+            black_places.draws.append(opponent_place)
+        else: # outcome == "L"
+            black_places.losses.append(opponent_place)
+    
+    opponents = lambda places: list(df[df.place.isin(places)].real_name) if places else []
+    
+    white_opponents = Opponents(
+        opponents(white_places.wins),
+        opponents(white_places.draws),
+        opponents(white_places.losses),
+    )
 
-    if wins_places:
-      wins = list(df[df['place'].isin(wins_places)]['real_name'])
-    if draws_places:
-      draws = list(df[df['place'].isin(draws_places)]['real_name'])
-    if losses_places:
-      losses = list(df[df['place'].isin(losses_places)]['real_name'])
+    black_opponents = Opponents(
+        opponents(black_places.wins),
+        opponents(black_places.draws),
+        opponents(black_places.losses)
+    )
 
-    return {
-        "wins" : wins,
-        "draws" : draws,
-        "losses" : losses
-    }
+    return white_opponents, black_opponents
 
 
-def get_opponents(df, player="Hikaru Nakamura") -> dict:
+def get_opponents(df, player_name="Hikaru Nakamura") -> Opponents:
     """
-    Returns dict of results against all opponents of the player.
+    Returns results against all opponents of the player.
     """
-    dfs_by_tournament = {}
-    grouped = df.groupby('tournament')
-    for tournament, group_df in grouped:
-        dfs_by_tournament[tournament] = group_df
+    tournaments = {name: group for name, group in df.groupby("tournament")}
 
-    places = []
-    for tournament in dfs_by_tournament.values():
-        if player in tournament["real_name"].values:
-            places.append(tournament[tournament["real_name"] == player]["place"].iloc[0])
-        else:
-            places.append(None)
+    player_places = [
+        tournament[tournament["real_name"] == player_name]["place"].iloc[0] 
+        if player_name in tournament["real_name"].values else None
+        for tournament in tournaments.values()
+    ]
 
-    opponents = {
-        "wins" : [],
-        "draws" : [],
-        "losses" : []
-    }
-    for tournament, place in zip(dfs_by_tournament.values(), places):
+    white_opponents = Opponents()
+    black_opponents = Opponents()
+    for tournament, place in zip(tournaments.values(), player_places):
         if place:
-            tournament_opponents = get_opponents_in_tournament(tournament, place)
-            for result in opponents:
-                if tournament_opponents[result]:
-                  opponents[result].extend(tournament_opponents[result])
+            tourn_white_opps, tourn_black_opps = get_opponents_in_tournament(tournament, place)
+            white_opponents += tourn_white_opps
+            black_opponents += tourn_black_opps
 
-    for result in opponents:
-        # Some players didn't enter their name.
-        opponents[result] = [player for player in opponents[result] if isinstance(player, str)]
+    # Some players didn't enter their name and have nan value.
+    for field in fields(white_opponents):
+        players = getattr(white_opponents, field.name)
+        setattr(white_opponents, field.name, [player for player in players if not pd.isna(player)])
 
-    return opponents
+    for field in fields(black_opponents):
+        players = getattr(black_opponents, field.name)
+        setattr(black_opponents, field.name, [player for player in players if not pd.isna(player)])
+
+    return white_opponents, black_opponents
 
 
 def analyze_opponents(df, player="Hikaru Nakamura"):
-    opponents = get_opponents(df, player)
-    wins = Counter(opponents["wins"]).most_common(5)
-    draws = Counter(opponents["draws"]).most_common(5)
-    losses = Counter(opponents["losses"]).most_common(5)
-    total = Counter(opponents["wins"] + opponents["draws"] + opponents["losses"]).most_common(5)
+    white_opponents, black_opponents = get_opponents(df, player)
+    opponents = white_opponents + black_opponents
 
-    return Opponents(wins, draws, losses, total)
+    white = Opponents(
+        Counter(white_opponents.wins).most_common(5),
+        Counter(white_opponents.draws).most_common(5),
+        Counter(white_opponents.losses).most_common(5),
+        Counter(white_opponents.wins + white_opponents.draws + white_opponents.losses).most_common(5)
+    )
+
+    black = Opponents(
+        Counter(black_opponents.wins).most_common(5),
+        Counter(black_opponents.draws).most_common(5),
+        Counter(black_opponents.losses).most_common(5),
+        Counter(black_opponents.wins + black_opponents.draws + black_opponents.losses).most_common(5)
+    )
+
+    total = Opponents(
+        Counter(opponents.wins).most_common(5),
+        Counter(opponents.draws).most_common(5),
+        Counter(opponents.losses).most_common(5),
+        Counter(opponents.wins + opponents.draws + opponents.losses).most_common(5)
+    )
+    
+    return white, black, total
 
 
 def head_to_head(df, players):
-    results = {}
+    all_opponents = {player: get_opponents(df, player) for player in players}
+    white_results, black_results, results = {}, {}, {}
+    white_total = defaultdict(lambda: Results())
+    black_total = defaultdict(lambda: Results())
     total = defaultdict(lambda: Results())
-        
+
     for player, opponent in combinations(players, 2):
-        opponents = get_opponents(df, player)
-        wins = opponents["wins"].count(opponent)
-        draws = opponents["draws"].count(opponent)
-        losses = opponents["losses"].count(opponent)
-        results[(player, opponent)] = Results(wins, draws, losses)
+        white_opponents, black_opponents = all_opponents[player]
+        white_wins = white_opponents.wins.count(opponent)
+        white_draws = white_opponents.draws.count(opponent)
+        white_losses = white_opponents.losses.count(opponent)
+        white_results[(player, opponent)] = Results(white_wins, white_draws, white_losses)
+        black_wins = black_opponents.wins.count(opponent)
+        black_draws = black_opponents.draws.count(opponent)
+        black_losses = black_opponents.losses.count(opponent)
+        black_results[(player, opponent)] = Results(black_wins, black_draws, black_losses)
+        results[(player, opponent)] = white_results[(player, opponent)] + black_results[(player, opponent)]
+        white_total[player] += white_results[(player, opponent)]
+        black_total[opponent] += black_results[(player, opponent)]
+        total[player] += results[(player, opponent)]
+        total[opponent] += ~results[(player, opponent)]
 
-        total[player] += Results(wins, draws, losses)
-        total[opponent] += ~Results(wins, draws, losses) # Wins and losses are switched.
-
-    return results, total
+    return white_results, black_results, results, white_total, black_total, total
