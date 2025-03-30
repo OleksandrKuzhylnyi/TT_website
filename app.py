@@ -9,7 +9,7 @@ from tournaments import (
 )
 from players import (
     plot_player_ranking, analyze_player_performance,
-    analyze_performance_by_rounds, analyze_opponents, head_to_head
+    analyze_performance_by_rounds, analyze_by_color, head_to_head
 )
 from general import slice_by_date
 
@@ -62,10 +62,10 @@ def player():
 
     player_name = request.form.get("player_name", "Hikaru Nakamura").strip()
     
-
     stats = analyze_player_performance(df, player_name)
     rounds_stats = analyze_performance_by_rounds(df, player_name)
-    white_opponents, black_opponents, opponents = analyze_opponents(df, player_name)
+    white_opponents, black_opponents, opponents, stats_by_color = analyze_by_color(df, player_name)
+    white_stats, black_stats = stats_by_color
     plot_player_ranking(df, player_name)
 
     return render_template(
@@ -79,6 +79,8 @@ def player():
         white_opponents=white_opponents,
         black_opponents=black_opponents,
         opponents=opponents,
+        white_stats=white_stats,
+        black_stats=black_stats
     )
 
 

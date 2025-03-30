@@ -23,37 +23,45 @@ function updatePlayersArea() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    const table = document.querySelector(".table-container table");
-    const rows = Array.from(table.querySelectorAll("tbody tr"));
-
-    // Iterate over each row (excluding the header row)
-    rows.forEach(row => {
-        const cells = Array.from(row.querySelectorAll(".stat"));
-        const values = cells.map(cell => parseFloat(cell.textContent));
-
-        // Find the min and max values in the row
-        const minValue = Math.min(...values);
-        const maxValue = Math.max(...values);
-
-        // Apply colors to each cell in the row
-        cells.forEach((cell, index) => {
-        const value = values[index];
-
-        if (cell.classList.contains("positive")) {
-            // Positive metrics: green for max, red for min
-            if (value === maxValue) {
-            cell.classList.add("green");
-            } else if (value === minValue) {
-            cell.classList.add("red");
-            }
-        } else if (cell.classList.contains("negative")) {
-            // Negative metrics: green for min, red for max
-            if (value === minValue) {
-            cell.classList.add("green");
-            } else if (value === maxValue) {
-            cell.classList.add("red");
-            }
-        }
+    document.querySelectorAll(".table-container table").forEach(table => {
+        const rows = Array.from(table.querySelectorAll("tr")).filter(row => 
+            !row.querySelector("th") || row.querySelector("td")
+        );
+    
+        rows.forEach(row => {
+            const cells = Array.from(row.querySelectorAll(".stat"));
+            // Skip rows with no stat cells or header rows
+            if (cells.length === 0 || row.querySelector("th")) return;
+    
+            const values = cells.map(cell => {
+                const text = cell.textContent.replace('%', '');
+                return parseFloat(text) || 0;
+            });
+    
+            // Find min and max values
+            const minValue = Math.min(...values);
+            const maxValue = Math.max(...values);
+    
+            cells.forEach((cell, index) => {
+                const value = values[index];
+                
+                // Clear previous highlighting
+                cell.classList.remove("green", "red");
+                
+                if (cell.classList.contains("positive")) {
+                    if (value === maxValue) {
+                        cell.classList.add("green");
+                    } else if (value === minValue) {
+                        cell.classList.add("red");
+                    }
+                } else if (cell.classList.contains("negative")) {
+                    if (value === minValue) {
+                        cell.classList.add("green");
+                    } else if (value === maxValue) {
+                        cell.classList.add("red");
+                    }
+                }
+            });
         });
     });
 

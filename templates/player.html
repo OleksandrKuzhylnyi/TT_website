@@ -178,6 +178,52 @@
         </div>
 
         <h2>Statistics by Color</h2>
+        <div class="table-container">
+            <table>
+                <tr><th>Statistic</th><th>White</th><th>Black</th></tr>
+                <tr>
+                    <td>Played Games</td>
+                    <td class="stat positive">{{ white_stats.played_games }}</td>
+                    <td class="stat positive">{{ black_stats.played_games }}</td>
+                </tr>
+                <tr>
+                    <td>Wins</td>
+                    <td class="stat positive">{{ white_stats.wins }}</td>
+                    <td class="stat positive">{{ black_stats.wins }}</td>
+                </tr>
+                <tr>
+                    <td>Draws</td>
+                    <td>{{ white_stats.draws }}</td>
+                    <td>{{ black_stats.draws }}</td>
+                </tr>
+                <tr>
+                    <td>Losses</td>
+                    <td class="stat negative">{{ white_stats.losses }}</td>
+                    <td class="stat negative">{{ black_stats.losses }}</td>
+                </tr>
+                <tr>
+                    <td>Points Percentage</td>
+                    <td class="stat positive">{{ white_stats.percent_of_points|round(2) }}%</td>
+                    <td class="stat positive">{{ black_stats.percent_of_points|round(2) }}%</td>
+                </tr>
+                <tr>
+                    <td>Win Percentage</td>
+                    <td class="stat positive">{{ white_stats.percent_of_wins|round(2) }}%</td>
+                    <td class="stat positive">{{ black_stats.percent_of_wins|round(2) }}%</td>
+                </tr>
+                <tr>
+                    <td>Draw Percentage</td>
+                    <td>{{ white_stats.percent_of_draws|round(2) }}%</td>
+                    <td>{{ black_stats.percent_of_draws|round(2) }}%</td>
+                </tr>
+                <tr>
+                    <td>Loss Percentage</td>
+                    <td class="stat negative">{{ white_stats.percent_of_losses|round(2) }}%</td>
+                    <td class="stat negative">{{ black_stats.percent_of_losses|round(2) }}%</td>
+                </tr>
+            </table>
+        </div>
+
         <h3>White</h3>
         <div class="tables-container">
             <div>

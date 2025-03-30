@@ -119,10 +119,10 @@ def analyze_player_performance(df, player="Hikaru Nakamura") -> dict:
     last_tournament = player_df["date"].max().strftime("%Y-%m-%d")
 
     max_possible_games = player_df.shape[0] * 11
-    rounds = player_df.loc[:, "round_1":"round_11"].columns
-    wins = sum([player_df[round].str.startswith("W").sum() for round in rounds])
-    draws = sum([player_df[round].str.startswith("D").sum() for round in rounds])
-    losses = sum([player_df[round].str.startswith("L").sum() for round in rounds])
+    rounds = [f"round_{i}" for i in range(1, 12)]
+    wins = sum([player_df[rnd].str.startswith("W").sum() for rnd in rounds])
+    draws = sum([player_df[rnd].str.startswith("D").sum() for rnd in rounds])
+    losses = sum([player_df[rnd].str.startswith("L").sum() for rnd in rounds])
     played_games = wins + draws + losses
     skipped_games = max_possible_games - played_games
 
@@ -283,9 +283,38 @@ def get_opponents(df, player_name="Hikaru Nakamura") -> Opponents:
     return white_opponents, black_opponents
 
 
-def analyze_opponents(df, player="Hikaru Nakamura"):
+def analyze_by_color(df, player="Hikaru Nakamura"):
     white_opponents, black_opponents = get_opponents(df, player)
     opponents = white_opponents + black_opponents
+
+    white_results = Results(
+        len(white_opponents.wins),
+        len(white_opponents.draws),
+        len(white_opponents.losses)
+    )
+    
+    black_results = Results(
+        len(black_opponents.wins),
+        len(black_opponents.draws),
+        len(black_opponents.losses)
+    )
+    
+    results = [
+        {
+            "played_games": played_games,
+            "wins": color.wins,
+            "draws": color.draws,
+            "losses": color.losses,
+            "percent_of_points": 100 * (color.wins + color.draws / 2) / played_games,
+            "percent_of_wins": 100 * color.wins / played_games,
+            "percent_of_draws": 100 * color.draws / played_games,
+            "percent_of_losses": 100 * color.losses / played_games
+        }
+        for color, played_games in [
+            (white_results, white_results.wins + white_results.draws + white_results.losses),
+            (black_results, black_results.wins + black_results.draws + black_results.losses)
+        ]
+    ]
 
     white = Opponents(
         Counter(white_opponents.wins).most_common(5),
@@ -308,7 +337,7 @@ def analyze_opponents(df, player="Hikaru Nakamura"):
         Counter(opponents.wins + opponents.draws + opponents.losses).most_common(5)
     )
     
-    return white, black, total
+    return white, black, total, results
 
 
 def head_to_head(df, players):
