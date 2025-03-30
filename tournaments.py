@@ -5,7 +5,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 
-def num_of_players(df):
+def plot_num_of_players(df):
     early = df[df["time"] == "E"]
     late = df[df["time"] == "L"]
 
@@ -27,27 +27,7 @@ def num_of_players(df):
     plt.savefig("static/images/num_of_players.png")
     plt.close()
 
-def average_score_of_winner(df):
-    winners_df = df[df["place"] == 1]
-    early = winners_df[winners_df["time"] == "E"]
-    late = winners_df[winners_df["time"] == "L"]
-    early_scores = early.loc[:, ["date", "score"]].sort_values(by="date")
-    late_scores = late.loc[:, ["date", "score"]].sort_values(by="date")
-    plt.figure(figsize=(12, 6))
-    plt.plot(early_scores["date"], early_scores["score"], label="Early", marker='o', color='blue')
-    plt.plot(late_scores["date"], late_scores["score"], label="Late", marker='s', color='red')
-    plt.legend()
-    plt.xticks(early_scores["date"][::2], rotation=45)
-    plt.yticks(np.arange(9.5, 11.5, 0.5))
-    plt.title("Score of the Winner over Time")
-    plt.ylabel("Score")
-    plt.grid(True, linestyle='--', linewidth=0.5, alpha=0.7)
-    plt.tight_layout()
-    plt.gca().set_facecolor('#f9f9f9')
-    plt.savefig("static/images/winner_score.png")
-    plt.close()
-
-def average_score_of_top_10(df):
+def plot_average_score_of_top_10(df):
     top_10_df = df[df["place"] <= 10]
     early = top_10_df[top_10_df["time"] == "E"]
     late = top_10_df[top_10_df["time"] == "L"]
@@ -69,7 +49,7 @@ def average_score_of_top_10(df):
     plt.savefig("static/images/top_10_score.png")
     plt.close()
 
-def average_rating_of_top_10(df):
+def plot_average_rating_of_top_10(df):
     top_10_df = df[df["place"] <= 10]
     early = top_10_df[top_10_df["time"] == "E"]
     late = top_10_df[top_10_df["time"] == "L"]
@@ -91,7 +71,7 @@ def average_rating_of_top_10(df):
     plt.savefig("static/images/top_10_rating.png")
     plt.close()
 
-def skips_per_round(df):
+def plot_skips_per_round(df):
     num_games = df.shape[0]
     skips = [(df[f"round_{i}"] == "U--").sum() / num_games for i in range(1, 12)]
     plt.figure(figsize=(12, 6))
@@ -108,7 +88,7 @@ def skips_per_round(df):
     plt.close()
 
 
-def winners_by_starting_rank(df):
+def plot_winners_by_starting_rank(df):
     starting_rankings = df[df["place"] == 1]["starting_rank"]
     bins = [0, 1, 2, 3, 5, 10, 20, float("inf")]
     labels = ["1", "2", "3", "4-5", "6-10", "11-20", "20+"]
@@ -129,7 +109,7 @@ def winners_by_starting_rank(df):
     plt.close()
 
 
-def winners_by_rating(df):
+def plot_winners_by_rating(df):
     ratings = df[df["place"] == 1]["rating"]
     bins = range(2800, 3301, 50)
     plt.figure(figsize=(8, 8))
@@ -142,14 +122,9 @@ def winners_by_rating(df):
     plt.tight_layout()
     plt.savefig("static/images/winners_by_rating.png")
     plt.close()
-    
-
-def players_by_participation(df, limit=100):
-    top_participators = df["real_name"].value_counts()
-    return top_participators[:limit].to_dict()
 
 
-def top_3_finishers(df):
+def plot_top_3_finishers(df):
     first = df[df["place"] == 1]["real_name"].value_counts().reset_index()
     first.columns = ['real_name', '1']
     second = df[df["place"] == 2]["real_name"].value_counts().reset_index()
@@ -175,3 +150,8 @@ def top_3_finishers(df):
     plt.tight_layout()
     plt.savefig("static/images/top_3_finishers.png")
     plt.close()
+
+
+def players_by_participation(df, limit=100):
+    top_participators = df["real_name"].value_counts()
+    return top_participators[:limit].to_dict()

@@ -178,7 +178,7 @@
                     <td>{{ games.losses }}</td>
                 </tr>
             {% endfor %}
-            {% if results|length > 1 %}
+            {% if results|length > 2 %}
                 {% for player, games in total.items() %}
                     <tr>
                         <td>{{ player }}</td>
@@ -211,7 +211,7 @@
                     <td>{{ games.losses }}</td>
                 </tr>
             {% endfor %}
-            {% if white_results|length > 1 %}
+            {% if white_results|length > 2 %}
                 {% for player, games in white_total.items() %}
                     <tr>
                         <td>{{ player }}</td>
@@ -222,7 +222,7 @@
                     </tr>
                 {% endfor %}
             {% endif %}
-            {% if white_results|length > 1 %}
+            {% if white_results|length > 2 %}
                 {% for player, games in black_total.items() %}
                     <tr>
                         <td>Others</td>

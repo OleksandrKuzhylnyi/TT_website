@@ -3,9 +3,9 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 from tournaments import (
-    num_of_players, average_score_of_winner, average_score_of_top_10,
-    average_rating_of_top_10, skips_per_round, winners_by_starting_rank,
-    winners_by_rating, players_by_participation, top_3_finishers
+    plot_num_of_players, plot_average_score_of_top_10, plot_average_rating_of_top_10,
+    plot_skips_per_round, plot_winners_by_starting_rank, plot_winners_by_rating,
+    players_by_participation, plot_top_3_finishers
 )
 from players import (
     plot_player_ranking, analyze_player_performance,
@@ -35,14 +35,13 @@ def tournaments():
 
     df = slice_by_date(DATA, start_date, stop_date)
 
-    num_of_players(df)
-    average_score_of_winner(df)
-    average_score_of_top_10(df)
-    average_rating_of_top_10(df)
-    skips_per_round(df)
-    winners_by_starting_rank(df)
-    winners_by_rating(df)
-    top_3_finishers(df)
+    plot_num_of_players(df)
+    plot_average_score_of_top_10(df)
+    plot_average_rating_of_top_10(df)
+    plot_skips_per_round(df)
+    plot_winners_by_starting_rank(df)
+    plot_winners_by_rating(df)
+    plot_top_3_finishers(df)
     top_participators = players_by_participation(df)
 
     return render_template(
