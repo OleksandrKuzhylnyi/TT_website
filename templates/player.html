@@ -53,19 +53,19 @@
                 <tr>
                     <td>Played Games</td>
                     {% for round in rounds_stats %}
-                    <td>{{ round.played_games }}</td>
+                    <td class="stat positive">{{ round.played_games }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Skipped Games</td>
                     {% for round in rounds_stats %}
-                    <td>{{ round.skipped_games }}</td>
+                    <td class="stat negative">{{ round.skipped_games }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Wins</td>
                     {% for round in rounds_stats %}
-                    <td>{{ round.wins }}</td>
+                    <td class="stat positive">{{ round.wins }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
@@ -77,19 +77,19 @@
                 <tr>
                     <td>Losses</td>
                     {% for round in rounds_stats %}
-                    <td>{{ round.losses }}</td>
+                    <td class="stat negative">{{ round.losses }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Points Percentage</td>
                     {% for round in rounds_stats %}
-                    <td>{{ round.percent_of_points|round(2) }}%</td>
+                    <td class="stat positive">{{ round.percent_of_points|round(2) }}%</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Win Percentage</td>
                     {% for round in rounds_stats %}
-                    <td>{{ round.percent_of_wins|round(2) }}%</td>
+                    <td class="stat positive">{{ round.percent_of_wins|round(2) }}%</td>
                     {% endfor %}
                 </tr>
                 <tr>
@@ -101,7 +101,7 @@
                 <tr>
                     <td>Loss Percentage</td>
                     {% for round in rounds_stats %}
-                    <td>{{ round.percent_of_losses|round(2) }}%</td>
+                    <td class="stat negative">{{ round.percent_of_losses|round(2) }}%</td>
                     {% endfor %}
                 </tr>
             </table>

@@ -9,7 +9,8 @@ from tournaments import (
 )
 from players import (
     plot_player_ranking, analyze_player_performance,
-    analyze_performance_by_rounds, analyze_by_color, head_to_head
+    analyze_performance_by_rounds, get_common_opponents, head_to_head,
+    analyze_perfomance_by_color
 )
 from general import slice_by_date
 
@@ -64,8 +65,8 @@ def player():
     
     stats = analyze_player_performance(df, player_name)
     rounds_stats = analyze_performance_by_rounds(df, player_name)
-    white_opponents, black_opponents, opponents, stats_by_color = analyze_by_color(df, player_name)
-    white_stats, black_stats = stats_by_color
+    white_opponents, black_opponents, opponents = get_common_opponents(df, player_name)
+    white_stats, black_stats = analyze_perfomance_by_color(df, player_name)
     plot_player_ranking(df, player_name)
 
     return render_template(
@@ -93,7 +94,7 @@ def comparison():
 
     players = []
     stats_list = []
-    players_raw = request.form.get("players", "")
+    players_raw = request.form.get("players", "Hikaru Nakamura\nMagnus Carlsen")
 
     players = [p.strip() for p in players_raw.split("\n") if p.strip()]
     for player in players:

@@ -75,12 +75,12 @@ def get_color(rank):
 
 
 def plot_player_ranking(df, player="Hikaru Nakamura"):
-    df_player = df[df["real_name"] == player]
-    rankings_by_date = list(zip(df_player["date"].values, df_player["place"].values))
+    player_df = df[df["real_name"] == player]
+    rankings_by_date = list(zip(player_df["date"].values, player_df["place"].values))
     rankings_by_date.sort()
     colors = [get_color(rank) for _, rank in rankings_by_date]
     plt.scatter(*zip(*rankings_by_date), c=colors, figure=plt.figure(figsize=(16, 12)))
-    dates = sorted(df_player["date"].unique())
+    dates = sorted(player_df["date"].unique())
     plt.xticks(dates[::2], rotation=45)
     plt.title(f"Rankings of {player}")
     plt.ylabel("Ranking (Log Scale)")
@@ -107,6 +107,7 @@ def plot_player_ranking(df, player="Hikaru Nakamura"):
     plt.tight_layout()
     plt.savefig(f"static/images/{player.replace(' ', '_')}_ranking.png")
     plt.close()
+
 
 def analyze_player_performance(df, player="Hikaru Nakamura") -> dict:
     """
@@ -283,38 +284,9 @@ def get_opponents(df, player_name="Hikaru Nakamura") -> Opponents:
     return white_opponents, black_opponents
 
 
-def analyze_by_color(df, player="Hikaru Nakamura"):
+def get_common_opponents(df, player="Hikaru Nakamura"):
     white_opponents, black_opponents = get_opponents(df, player)
     opponents = white_opponents + black_opponents
-
-    white_results = Results(
-        len(white_opponents.wins),
-        len(white_opponents.draws),
-        len(white_opponents.losses)
-    )
-    
-    black_results = Results(
-        len(black_opponents.wins),
-        len(black_opponents.draws),
-        len(black_opponents.losses)
-    )
-    
-    results = [
-        {
-            "played_games": played_games,
-            "wins": color.wins,
-            "draws": color.draws,
-            "losses": color.losses,
-            "percent_of_points": 100 * (color.wins + color.draws / 2) / played_games,
-            "percent_of_wins": 100 * color.wins / played_games,
-            "percent_of_draws": 100 * color.draws / played_games,
-            "percent_of_losses": 100 * color.losses / played_games
-        }
-        for color, played_games in [
-            (white_results, white_results.wins + white_results.draws + white_results.losses),
-            (black_results, black_results.wins + black_results.draws + black_results.losses)
-        ]
-    ]
 
     white = Opponents(
         Counter(white_opponents.wins).most_common(5),
@@ -337,10 +309,10 @@ def analyze_by_color(df, player="Hikaru Nakamura"):
         Counter(opponents.wins + opponents.draws + opponents.losses).most_common(5)
     )
     
-    return white, black, total, results
+    return white, black, total
 
 
-def head_to_head(df, players):
+def head_to_head(df, players: List[str]):
     all_opponents = {player: get_opponents(df, player) for player in players}
     white_results, black_results, results = {}, {}, {}
     white_total = defaultdict(lambda: Results())
@@ -363,3 +335,41 @@ def head_to_head(df, players):
         total[player] += results[(player, opponent)]
 
     return white_results, black_results, results, white_total, black_total, total
+
+
+def analyze_perfomance_by_color(df, player="Hikaru Nakamura"):
+    player_df = df[df.real_name == player]
+    rounds = [f"round_{i}" for i in range(1, 12)]
+
+    white_results = Results()
+    for result, field in zip(["W", "D", "L"], fields(white_results)):
+        setattr(white_results, field.name, sum([player_df[rnd].where(
+            (player_df[rnd].str.startswith(result)) &
+            (player_df[rnd].str.endswith("W"))).count()
+            for rnd in rounds]))
+        
+    black_results = Results()
+    for result, field in zip(["W", "D", "L"], fields(black_results)):
+        setattr(black_results, field.name, sum([player_df[rnd].where(
+            (player_df[rnd].str.startswith(result)) &
+            (player_df[rnd].str.endswith("B"))).count()
+            for rnd in rounds]))
+        
+    stats = [
+        {
+            "played_games": played_games,
+            "wins": color.wins,
+            "draws": color.draws,
+            "losses": color.losses,
+            "percent_of_points": 100 * (color.wins + color.draws / 2) / played_games,
+            "percent_of_wins": 100 * color.wins / played_games,
+            "percent_of_draws": 100 * color.draws / played_games,
+            "percent_of_losses": 100 * color.losses / played_games
+        }
+        for color, played_games in [
+            (white_results, white_results.wins + white_results.draws + white_results.losses),
+            (black_results, black_results.wins + black_results.draws + black_results.losses)
+        ]
+    ]
+
+    return stats
