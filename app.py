@@ -108,7 +108,6 @@ def comparison():
         players=players,
         stats_list=stats_list,
         white_results=white_results,
-        black_results=black_results,
         results=results,
         white_total=white_total,
         black_total=black_total,

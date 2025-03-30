@@ -192,5 +192,49 @@
         </table>
     </div>
 
+    <h2>Head-to-head Comparison by Color</h2>
+    <div class="table-container">
+        <table>
+            <tr>
+                <th>White</th>
+                <th>Black</th>
+                <th>Wins(W)</th>
+                <th>Draws</th>
+                <th>Wins(B)</th>
+            </tr>
+            {% for players, games in white_results.items() %}
+                <tr>
+                    <td>{{ players[0] }}</td>
+                    <td>{{ players[1] }}</td>
+                    <td>{{ games.wins }}</td>
+                    <td>{{ games.draws }}</td>
+                    <td>{{ games.losses }}</td>
+                </tr>
+            {% endfor %}
+            {% if white_results|length > 1 %}
+                {% for player, games in white_total.items() %}
+                    <tr>
+                        <td>{{ player }}</td>
+                        <td>Others</td>
+                        <td>{{ games.wins }}</td>
+                        <td>{{ games.draws }}</td>
+                        <td>{{ games.losses }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            {% if white_results|length > 1 %}
+                {% for player, games in black_total.items() %}
+                    <tr>
+                        <td>Others</td>
+                        <td>{{ player }}</td>
+                        <td>{{ games.losses }}</td>
+                        <td>{{ games.draws }}</td>
+                        <td>{{ games.wins }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </table>
+    </div>
+
 
 {% endblock %}

@@ -1,6 +1,6 @@
-from collections import Counter, defaultdict, namedtuple
+from collections import Counter, defaultdict
 from dataclasses import dataclass, field, fields
-from itertools import combinations
+from itertools import permutations
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -318,7 +318,7 @@ def head_to_head(df, players):
     black_total = defaultdict(lambda: Results())
     total = defaultdict(lambda: Results())
 
-    for player, opponent in combinations(players, 2):
+    for player, opponent in permutations(players, 2):
         white_opponents, black_opponents = all_opponents[player]
         white_wins = white_opponents.wins.count(opponent)
         white_draws = white_opponents.draws.count(opponent)
@@ -330,8 +330,7 @@ def head_to_head(df, players):
         black_results[(player, opponent)] = Results(black_wins, black_draws, black_losses)
         results[(player, opponent)] = white_results[(player, opponent)] + black_results[(player, opponent)]
         white_total[player] += white_results[(player, opponent)]
-        black_total[opponent] += black_results[(player, opponent)]
+        black_total[player] += black_results[(player, opponent)]
         total[player] += results[(player, opponent)]
-        total[opponent] += ~results[(player, opponent)]
 
     return white_results, black_results, results, white_total, black_total, total
