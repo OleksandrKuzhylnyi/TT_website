@@ -8,9 +8,8 @@ from tournaments import (
     players_by_participation, plot_top_3_finishers
 )
 from players import (
-    plot_player_ranking, analyze_player_performance,
+    plot_player_ranking, analyze_performance,
     analyze_performance_by_rounds, get_common_opponents, head_to_head,
-    analyze_perfomance_by_color
 )
 from general import slice_by_date
 
@@ -60,13 +59,11 @@ def player():
     stop_date = request.form.get("stop_date", MAX_DATE)
 
     df = slice_by_date(DATA, start_date, stop_date)
-
     player_name = request.form.get("player_name", "Hikaru Nakamura").strip()
     
-    stats = analyze_player_performance(df, player_name)
     rounds_stats = analyze_performance_by_rounds(df, player_name)
     white_opponents, black_opponents, opponents = get_common_opponents(df, player_name)
-    white_stats, black_stats = analyze_perfomance_by_color(df, player_name)
+    white_stats, black_stats, stats = analyze_performance(df, player_name)
     plot_player_ranking(df, player_name)
 
     return render_template(
@@ -98,7 +95,7 @@ def comparison():
 
     players = [p.strip() for p in players_raw.split("\n") if p.strip()]
     for player in players:
-        stats_list.append(analyze_player_performance(df, player))
+        stats_list.append(analyze_performance(df, player)[2])
 
     white_results, black_results, results, white_total, black_total, total = head_to_head(df, players)
 

@@ -5,7 +5,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import pandas as pd
-from typing import List
+from typing import List, Tuple
 
 
 @dataclass
@@ -14,6 +14,9 @@ class Results:
     draws: int = 0
     losses: int = 0
 
+    def total(self):
+        return self.wins + self.draws + self.losses
+    
     def __add__(self, other):
         if not isinstance(other, Results):
             raise TypeError
@@ -107,62 +110,6 @@ def plot_player_ranking(df, player="Hikaru Nakamura"):
     plt.tight_layout()
     plt.savefig(f"static/images/{player.replace(' ', '_')}_ranking.png")
     plt.close()
-
-
-def analyze_player_performance(df, player="Hikaru Nakamura") -> dict:
-    """
-    Analyzes the performance of a specific player.
-    """
-    player_df = df[df["real_name"] == player]
-
-    tournaments_count = player_df["tournament"].nunique()
-    first_tournament = player_df["date"].min().strftime("%Y-%m-%d")
-    last_tournament = player_df["date"].max().strftime("%Y-%m-%d")
-
-    max_possible_games = player_df.shape[0] * 11
-    rounds = [f"round_{i}" for i in range(1, 12)]
-    wins = sum([player_df[rnd].str.startswith("W").sum() for rnd in rounds])
-    draws = sum([player_df[rnd].str.startswith("D").sum() for rnd in rounds])
-    losses = sum([player_df[rnd].str.startswith("L").sum() for rnd in rounds])
-    played_games = wins + draws + losses
-    skipped_games = max_possible_games - played_games
-
-    first = player_df[player_df["place"] == 1].shape[0]
-    second = player_df[player_df["place"] == 2].shape[0]
-    third = player_df[player_df["place"] == 3].shape[0]
-    top5 = player_df[player_df["place"] <= 5].shape[0]
-    top10 = player_df[player_df["place"] <= 10].shape[0]
-    top100 = player_df[player_df["place"] <= 100].shape[0]
-
-    mean_place = player_df["place"].mean()
-    median_place = player_df["place"].median()
-
-    results = {
-        "player": player,
-        "tournaments_count": tournaments_count,
-        "first_tournament": first_tournament,
-        "last_tournament": last_tournament,
-        "max_possible_games": max_possible_games,
-        "played_games": played_games,
-        "skipped_games": skipped_games,
-        "wins": wins,
-        "draws": draws,
-        "losses": losses,
-        "percent_of_points": 100 * (wins + draws / 2) / played_games,
-        "percent_of_wins": 100 * wins / played_games,
-        "percent_of_draws": 100 * draws / played_games,
-        "percent_of_losses": 100 * losses / played_games,
-        "first_place": first,
-        "second_place": second,
-        "third_place": third,
-        "top5": top5,
-        "top10": top10,
-        "top100": top100,
-        "mean_place": mean_place,
-        "median_place": median_place
-    }
-
-    return results
 
 
 def analyze_performance_by_rounds(df, player="Hikaru Nakamura") -> dict:
@@ -337,10 +284,17 @@ def head_to_head(df, players: List[str]):
     return white_results, black_results, results, white_total, black_total, total
 
 
-def analyze_perfomance_by_color(df, player="Hikaru Nakamura"):
+def analyze_performance(df, player="Hikaru Nakamura") -> Tuple[dict]:
+    """
+    Returns statistics about player, including seperations by color.
+    """
     player_df = df[df.real_name == player]
     rounds = [f"round_{i}" for i in range(1, 12)]
 
+    tournaments_count = player_df["tournament"].nunique()
+    first_tournament = player_df["date"].min().strftime("%Y-%m-%d")
+    last_tournament = player_df["date"].max().strftime("%Y-%m-%d")
+    
     white_results = Results()
     for result, field in zip(["W", "D", "L"], fields(white_results)):
         setattr(white_results, field.name, sum([player_df[rnd].where(
@@ -355,21 +309,66 @@ def analyze_perfomance_by_color(df, player="Hikaru Nakamura"):
             (player_df[rnd].str.endswith("B"))).count()
             for rnd in rounds]))
         
-    stats = [
-        {
-            "played_games": played_games,
-            "wins": color.wins,
-            "draws": color.draws,
-            "losses": color.losses,
-            "percent_of_points": 100 * (color.wins + color.draws / 2) / played_games,
-            "percent_of_wins": 100 * color.wins / played_games,
-            "percent_of_draws": 100 * color.draws / played_games,
-            "percent_of_losses": 100 * color.losses / played_games
-        }
-        for color, played_games in [
-            (white_results, white_results.wins + white_results.draws + white_results.losses),
-            (black_results, black_results.wins + black_results.draws + black_results.losses)
-        ]
-    ]
+    white_games = white_results.total()
+    black_games = black_results.total()
+    results = white_results + black_results
+    max_possible_games = player_df.shape[0] * 11
+    played_games = results.total()
+    skipped_games = max_possible_games - played_games
+        
+    first = player_df[player_df["place"] == 1].shape[0]
+    second = player_df[player_df["place"] == 2].shape[0]
+    third = player_df[player_df["place"] == 3].shape[0]
+    top5 = player_df[player_df["place"] <= 5].shape[0]
+    top10 = player_df[player_df["place"] <= 10].shape[0]
+    top100 = player_df[player_df["place"] <= 100].shape[0]
 
-    return stats
+    mean_place = player_df["place"].mean()
+    median_place = player_df["place"].median()
+
+    return(
+        {
+            "played_games": white_games,
+            "wins": white_results.wins,
+            "draws": white_results.draws,
+            "losses": white_results.losses,
+            "percent_of_points": 100 * (white_results.wins + white_results.draws / 2) / white_games,
+            "percent_of_wins": 100 * white_results.wins / white_games,
+            "percent_of_draws": 100 * white_results.draws / white_games,
+            "percent_of_losses": 100 * white_results.losses / white_games
+        },
+        {
+            "played_games": black_games,
+            "wins": black_results.wins,
+            "draws": black_results.draws,
+            "losses": black_results.losses,
+            "percent_of_points": 100 * (black_results.wins + black_results.draws / 2) / black_games,
+            "percent_of_wins": 100 * black_results.wins / black_games,
+            "percent_of_draws": 100 * black_results.draws / black_games,
+            "percent_of_losses": 100 * black_results.losses / black_games
+        },
+        {
+            "player": player,
+            "tournaments_count": tournaments_count,
+            "first_tournament": first_tournament,
+            "last_tournament": last_tournament,
+            "max_possible_games": max_possible_games,
+            "played_games": played_games,
+            "skipped_games": skipped_games,
+            "wins": results.wins,
+            "draws": results.draws,
+            "losses": results.losses,
+            "percent_of_points": 100 * (results.wins + results.draws / 2) / played_games,
+            "percent_of_wins": 100 * results.wins / played_games,
+            "percent_of_draws": 100 * results.draws / played_games,
+            "percent_of_losses": 100 * results.losses / played_games,
+            "first_place": first,
+            "second_place": second,
+            "third_place": third,
+            "top5": top5,
+            "top10": top10,
+            "top100": top100,
+            "mean_place": mean_place,
+            "median_place": median_place
+        }
+    )
