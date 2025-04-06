@@ -13,6 +13,48 @@
         <img src="{{ url_for('static', filename='images/winners_by_rating.png') }}" alt="Winners by Starting Rank (hist)">
         <img src="{{ url_for('static', filename='images/top_3_finishers.png') }}" alt="Top 3 Finishers">
 
+        <h2>Most Lucky Players (Wins on Tiebreakers)</h2>
+        <div class="table-container">
+            <table>
+                <tr><th>Rank</th><th>Player</th><th>Wins</th></tr>
+                {% for name, count in lucky_players %}
+                <tr><td>{{ loop.index }}</td><td>{{ name }}</td><td>{{ count }}</td></tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <h2>Most Unlucky Players (Missed Wins Due to Tiebreakers)</h2>
+        <div class="table-container">
+            <table>
+                <tr><th>Rank</th><th>Player</th><th>Missed Wins</th></tr>
+                {% for name, count in unlucky_players %}
+                <tr><td>{{ loop.index }}</td><td>{{ name }}</td><td>{{ count }}</td></tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <h2>
+            Player by Index of Luck
+            <span class="tooltip-trigger" id="luck-index-tooltip-trigger">?</span>
+        </h2>
+        <div class="tooltip-content" id="luck-index-tooltip-content">
+            <strong>Index of Luck Formula:</strong><br>
+            <code>(Lucky Wins + 1) / (Unlucky Losses + 1*)</code><br>
+            <small><i>Lucky Wins:</i> Wins on tiebreakers.</small><br>
+            <small><i>Unlucky Losses:</i> Potential wins missed due to tiebreakers.</small><br>
+            <small>Higher values suggest that player is more "lucky".</small><br>
+            <small>If index equals to 1 number of player's lucky wins and unlucky losses are the same.</small><br>
+            <small>*Counts are increased by 1 to handle zero values and avoid division by zero.</small>
+        </div>
+        <div class="table-container">
+            <table>
+                <tr><th>Rank</th><th>Player</th><th>Index of Luck</th></tr>
+                {% for name, count in luck_list %}
+                <tr><td>{{ loop.index }}</td><td>{{ name }}</td><td>{{ count|round(2) }}</td></tr>
+                {% endfor %}
+            </table>
+        </div>
+
         <h2>Top Participators out of {{ max_possible_tournaments }} Tournaments</h2>
         <div class="table-container">
             <table>

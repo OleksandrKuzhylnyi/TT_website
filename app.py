@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 from tournaments import (
     plot_num_of_players, plot_average_score_of_top_10, plot_average_rating_of_top_10,
     plot_skips_per_round, plot_winners_by_starting_rank, plot_winners_by_rating,
-    players_by_participation, plot_top_3_finishers
+    players_by_participation, plot_top_3_finishers, calculate_luck
 )
 from players import (
     plot_player_ranking, analyze_performance,
@@ -44,6 +44,7 @@ def tournaments():
     plot_top_3_finishers(df)
     top_participators = players_by_participation(df)
     max_possible_tournaments = len(df.tournament.unique())
+    lucky_players, unlucky_players, luck_list = calculate_luck(df)
 
     return render_template(
         "tournaments.html",
@@ -51,7 +52,10 @@ def tournaments():
         start_date=start_date,
         stop_date=stop_date,
         top_participators=top_participators,
-        max_possible_tournaments=max_possible_tournaments
+        max_possible_tournaments=max_possible_tournaments,
+        lucky_players=lucky_players,
+        unlucky_players=unlucky_players,
+        luck_list=luck_list,
     )
 
 

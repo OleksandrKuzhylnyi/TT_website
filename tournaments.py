@@ -1,8 +1,9 @@
-import pandas as pd
-import numpy as np
+from collections import Counter
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 
 
 def plot_num_of_players(df):
@@ -155,3 +156,29 @@ def plot_top_3_finishers(df):
 def players_by_participation(df, limit=100):
     top_participators = df["real_name"].value_counts()
     return top_participators[:limit].to_dict()
+
+
+def calculate_luck(df):
+    tournaments = [tournament for _, tournament in df.groupby("tournament")]
+
+    lucky_players, unlucky_players = [], []
+    for tourn in tournaments:
+        score = tourn.iloc[0].score
+        i = 1 # Number of players with the same score as a winner (including the winner).
+        while tourn.iloc[i].score == score:
+            i += 1
+        players_with_the_same_score = tourn.iloc[1:i]
+        unlucky_in_tournament = players_with_the_same_score.real_name.to_list()
+        if unlucky_in_tournament:
+            lucky_players.append(tourn.iloc[0].real_name)
+        unlucky_players += unlucky_in_tournament
+
+    lucky = Counter(lucky_players)
+    unlucky = Counter(unlucky_players)
+
+    index_of_luck = {player: (lucky.get(player, 0) + 1) / (unlucky.get(player, 0) + 1)
+                     for player in lucky.keys() | unlucky.keys()}
+    
+    luck_list = sorted(index_of_luck.items(), key=lambda item: item[1], reverse=True)
+    
+    return Counter(lucky_players).most_common(), Counter(unlucky_players).most_common(), luck_list
