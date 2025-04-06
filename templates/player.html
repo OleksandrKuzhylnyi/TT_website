@@ -4,15 +4,25 @@
 
     {% set current_route = 'player' %}
 
+    {% if error_message %}
+        <div class="error-message">
+            <p>{{ error_message }}</p>
+        </div>
+    {% endif %}
+
     <h1>Player Statistics</h1>
     <form method="POST">
         <input type="hidden" name="start_date" value="{{ start_date }}">
         <input type="hidden" name="stop_date" value="{{ stop_date }}">
         <label for="player_name">Enter Player Name:</label>
-        <input type="text" id="player_name" name="player_name" value="{{ player_name }}" autocomplete="off" autofocus requireds>
+        <input type="text" id="player_name" name="player_name" value="{{ player_name }}" 
+            autocomplete="off" autofocus required 
+            onfocus="let tmp = this.value; this.value = ''; this.value = tmp">
         <div id="autocomplete-suggestions"></div> <!-- Placeholder for suggestions -->
         <button type="submit">Show Stats</button>
     </form>
+
+    {% if player_name %}
     <h2>Performance Summary for {{ player_name }}</h2>
         <div class="table-container">
             <table>
@@ -367,7 +377,7 @@
         </div>
 
 
-        <img src="{{ url_for('static', filename='images/' + player_name.replace(' ', '_') + '_ranking.png') }}"
-         alt="Player Ranking" width="1200" height="900">
-
+    <img src="{{ url_for('static', filename='images/' + player_name.replace(' ', '_') + '_ranking.png') }}"
+     alt="Player Ranking" width="1200" height="900">
+    {% endif %}
 {% endblock %}

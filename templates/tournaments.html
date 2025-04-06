@@ -13,7 +13,7 @@
         <img src="{{ url_for('static', filename='images/winners_by_rating.png') }}" alt="Winners by Starting Rank (hist)">
         <img src="{{ url_for('static', filename='images/top_3_finishers.png') }}" alt="Top 3 Finishers">
 
-        <h2>Top Participators</h2>
+        <h2>Top Participators out of {{ max_possible_tournaments }} Tournaments</h2>
         <div class="table-container">
             <table>
                 <tr><th>Rank</th><th>Player</th><th>Participations</th></tr>

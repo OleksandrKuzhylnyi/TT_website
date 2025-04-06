@@ -150,11 +150,11 @@ def analyze_performance_by_rounds(df, player="Hikaru Nakamura") -> dict:
     return results
 
 
-def get_opponents_in_tournament(df: pd.DataFrame, place: int) -> Opponents:
+def get_opponents_in_tournament(tournament: pd.DataFrame, place: int) -> Opponents:
     """
     Returns results against opponents of player by place in specific tournament.
     """
-    row = df[df["place"] == place].iloc[0]
+    row = tournament[tournament["place"] == place].iloc[0]
     rounds = [f"round_{i}" for i in range(1, 12)]
 
     white_games = [row[rnd] for rnd in rounds if row[rnd][-1] == "W"]
@@ -182,7 +182,8 @@ def get_opponents_in_tournament(df: pd.DataFrame, place: int) -> Opponents:
         else: # outcome == "L"
             black_places.losses.append(opponent_place)
     
-    opponents = lambda places: list(df[df.place.isin(places)].real_name) if places else []
+    opponents = lambda places: (list(tournament[tournament.place.isin(places)].real_name) 
+                                if places else [])
     
     white_opponents = Opponents(
         opponents(white_places.wins),
@@ -203,17 +204,17 @@ def get_opponents(df, player_name="Hikaru Nakamura") -> Opponents:
     """
     Returns results against all opponents of the player.
     """
-    tournaments = {name: group for name, group in df.groupby("tournament")}
+    tournaments = [tournament for _, tournament in df.groupby("tournament")]
 
     player_places = [
         tournament[tournament["real_name"] == player_name]["place"].iloc[0] 
         if player_name in tournament["real_name"].values else None
-        for tournament in tournaments.values()
+        for tournament in tournaments
     ]
 
     white_opponents = Opponents()
     black_opponents = Opponents()
-    for tournament, place in zip(tournaments.values(), player_places):
+    for tournament, place in zip(tournaments, player_places):
         if place:
             tourn_white_opps, tourn_black_opps = get_opponents_in_tournament(tournament, place)
             white_opponents += tourn_white_opps

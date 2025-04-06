@@ -43,13 +43,15 @@ def tournaments():
     plot_winners_by_rating(df)
     plot_top_3_finishers(df)
     top_participators = players_by_participation(df)
+    max_possible_tournaments = len(df.tournament.unique())
 
     return render_template(
         "tournaments.html",
         current_route="tournaments",
         start_date=start_date,
         stop_date=stop_date,
-        top_participators=top_participators
+        top_participators=top_participators,
+        max_possible_tournaments=max_possible_tournaments
     )
 
 
@@ -58,8 +60,21 @@ def player():
     start_date = request.form.get("start_date", MIN_DATE)
     stop_date = request.form.get("stop_date", MAX_DATE)
 
-    df = slice_by_date(DATA, start_date, stop_date)
     player_name = request.form.get("player_name", "Hikaru Nakamura").strip()
+    if player_name not in PLAYER_NAMES:
+        error_message = f"Player '{player_name}' not found. Please select a valid player."
+        return render_template(
+        "player.html",
+        current_route="player",
+        start_date=start_date,
+        stop_date=stop_date,
+        player_name="",
+        error_message=error_message,
+    )
+    else:
+        error_message = None
+
+    df = slice_by_date(DATA, start_date, stop_date)
     
     rounds_stats = analyze_performance_by_rounds(df, player_name)
     white_opponents, black_opponents, opponents = get_common_opponents(df, player_name)
@@ -78,7 +93,8 @@ def player():
         black_opponents=black_opponents,
         opponents=opponents,
         white_stats=white_stats,
-        black_stats=black_stats
+        black_stats=black_stats,
+        error_message=error_message,
     )
 
 
@@ -95,7 +111,19 @@ def comparison():
 
     players = [p.strip() for p in players_raw.split("\n") if p.strip()]
     for player in players:
-        stats_list.append(analyze_performance(df, player)[2])
+        if player not in PLAYER_NAMES:
+            error_message = f"Player '{player}' not found. Please select a valid player."
+            return render_template(
+            "comparison.html",
+            current_route="comparison",
+            start_date=start_date,
+            stop_date=stop_date,
+            players=players,
+            error_message=error_message,
+        )
+        else:
+            error_message = None
+            stats_list.append(analyze_performance(df, player)[2])
 
     white_results, black_results, results, white_total, black_total, total = head_to_head(df, players)
 
