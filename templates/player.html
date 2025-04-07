@@ -380,4 +380,7 @@
     <img src="{{ url_for('static', filename='images/' + player_name.replace(' ', '_') + '_ranking.png') }}"
      alt="Player Ranking" width="1200" height="900">
     {% endif %}
+
+    <script src="{{ url_for('static', filename='player.js') }}"></script>
+
 {% endblock %}
